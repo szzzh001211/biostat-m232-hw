@@ -1,0 +1,153 @@
+---
+title: "Biostat M232 Homework 1"
+subtitle: Due Feb 7 @ 11:59PM
+author: "Ziheng Zhang_606300061"
+date: today
+format:
+  html:
+    theme: cosmo
+    embed-resources: true
+    number-sections: false
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    code-fold: false
+knitr:
+  opts_chunk: 
+    cache: false    
+    echo: true
+    fig.align: 'center'
+    fig.width: 6
+    fig.height: 4
+    message: FALSE
+execute:
+  eval: true    
+---
+
+## Question 1
+
+**Answer:**
+
+In the given problem, we consider a finite population of size $N$ from which a simple random sample of size $n$ is drawn. The sample mean $\bar{y}$ is used to estimate the population mean $\bar{Y}$, and under simple random sampling assumptions, the variance of the sample mean is given by:
+
+$$
+\begin{equation}
+\operatorname{Var}(\bar{y} - \bar{Y}) = s^2 \left( \frac{1}{n} - \frac{1}{N} \right)
+\tag{1}
+\end{equation}
+$$
+
+where:
+
+- $n$ is the sample size,
+- $s^2$ is the sample variance,
+- $N$ is the population size.
+
+However, due to random nonresponse, only $n_1$ of the $n$ sampled values are actually observed, resulting in a new sample mean $\bar{y}_1$ and sample variance $s_1^2$. In this case, the variance of the estimator is:
+
+$$
+\operatorname{Var}(\bar{y}_1 - \bar{Y}) = s_1^2 \left( \frac{1}{n_1} - \frac{1}{N} \right)
+$$
+
+Suppose the missing values are imputed using the mean of the observed data $\bar{y}_1$. The imputed dataset has a total mean still equal to $\bar{y}_1$, but the sample variance becomes:
+
+$$
+s_{\text{new}}^2 = s_1^2 \cdot \frac{n_1 - 1}{n - 1}
+$$
+
+The resulting variance of the sample mean under this imputation strategy is:
+
+$$
+\begin{equation}
+\operatorname{Var}(\bar{y} - \bar{Y}) = s_1^2 \left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}
+\tag{2}
+\end{equation}
+$$
+So the ratio of the imputed variance to the complete data variance is:
+$$
+\frac{\text{Imputed Variance}}{\text{Complete Data Variance}}
+= \frac{s_1^2 \left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}}
+{s^2 \left( \frac{1}{n} - \frac{1}{N} \right)}
+$$
+Assuming $s_1^2 \approx s^2$ (the observed sample is random), the ratio simplifies to:
+
+$$
+\frac{n_1 - 1}{n - 1}
+$$
+
+When $n_1$ is large, the ratio can be approximated as:
+
+$$
+\frac{n_1}{n}
+$$
+Thus, the resulting interval estimate of $\bar{Y}$ will be too short by a factor approximately equal to
+$$
+\sqrt{\frac{n_1}{n}}
+$$
+
+- If $80\%$ of the data is observed ($n_1 = 0.8n$), the interval width would be reduced by:
+$$
+\sqrt{\frac{0.8n}{n}} = \sqrt{0.8} \approx 0.894
+$$
+This implies the interval will be approximately **10.6% narrower** than it would have been with complete data.
+
+- If only 50% of the data is observed ($n_1 = 0.5n$):
+
+  $$
+  \sqrt{\frac{0.5n}{n}} = \sqrt{0.5} \approx 0.707
+  $$
+
+  The interval will be approximately **29.3% narrower**.
+
+- If just 30% of the data is observed ($n_1 = 0.3n$):
+
+  $$
+  \sqrt{\frac{0.3n}{n}} = \sqrt{0.3} \approx 0.548
+  $$
+  The interval width is **45.2% narrower**.
+
+
+## Question 2
+
+**Answer:**
+
+First we assume the linear regression model for $Y_1$ on $Y_2$ is:
+$$
+Y_1 = \beta_0 + \beta_1 Y_2 + \epsilon
+$$
+where $\epsilon$ is the error term with mean 0 and variance $\sigma^2$. So the conditional mean of $Y_1$ given $Y_2$ is:
+$$
+E(Y_1|Y_2) = \beta_0 + \beta_1 Y_2
+$$
+
+Given that the missingness of $Y_1$ depends only on $Y_2$, the missing data mechanism can be expressed as:
+$$
+P(Missing|Y_1, Y_2) = P(Missing|Y_2)
+$$
+This means given $Y_2$, the probability of missingness of $Y_1$ is independent of $Y_1$ but only depends on $Y_2$. So for the complete case$\{Y_1|Y_2 = y_2, observed\}$ has the same distribution as $\{Y_1|Y_2 = y_2\}$ in the full data set. So we have
+$$
+E(Y_1|Y_2 = y_2, observed) = E(Y_1|Y_2 = y_2)
+$$
+So we can correctly estimate the true parameter $\beta_1$ and $\beta_0$ using the complete data regression of $Y_1$ on $Y_2$.
+
+The least squares estimates of $\beta_0$ and $\beta_1$ are:
+$$
+\hat{\beta}_1 = \frac{\sum_{i=1}^n (Y_{1i} - \bar{Y}_1)(Y_{2i} - \bar{Y}_2)}{\sum_{i=1}^n (Y_{2i} - \bar{Y}_2)^2}
+$$
+
+$$
+\hat{\beta}_0 = \bar{Y}_1 - \hat{\beta}_1 \bar{Y}_2
+$$
+where $\bar{Y}_1$ and $\bar{Y}_2$ are the sample means of $Y_1$ and $Y_2$ respectively. The expectation of $\hat{\beta}_1$ and $\hat{\beta}_0$ are:
+$$
+E(\hat{\beta}_1) = \beta_1
+$$
+$$
+E(\hat{\beta}_0) = \beta_0
+$$
+So the sample regression of $Y_1$ on $Y_2$ based on complete units yields unbiased estimates of the regression parameters.
+
+
+## Question 3
+
+
