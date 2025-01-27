@@ -3004,6 +3004,9 @@ vertical-align: -.125em;
   <ul>
   <li><a href="#question-1" id="toc-question-1" class="nav-link active" data-scroll-target="#question-1">Question 1</a></li>
   <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a></li>
+  <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4">Question 4</a></li>
+  <li><a href="#question-5" id="toc-question-5" class="nav-link" data-scroll-target="#question-5">Question 5</a></li>
   </ul>
 </nav>
 </div>
@@ -3123,6 +3126,100 @@ E(\hat{\beta}_1) = \beta_1
 \]</span> <span class="math display">\[
 E(\hat{\beta}_0) = \beta_0
 \]</span> So the sample regression of <span class="math inline">\(Y_1\)</span> on <span class="math inline">\(Y_2\)</span> based on complete units yields unbiased estimates of the regression parameters.</p>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<p><strong>Answer:</strong></p>
+<p>The overall mean cholesterol for respondents is calculated using the formula: <span class="math display">\[
+\bar{y} = \frac{\sum n_{i,resp} \bar{y}_i}{\sum n_{i,resp}}
+\]</span> Substituting the given values: <span class="math display">\[
+\begin{align*}
+\bar{y} &amp;= \frac{(22 \times 220) + (27 \times 225) + (16 \times 250) + (5 \times 270)}{22 + 27 + 16 + 5}\\
+&amp;= \frac{4840 + 6075 + 4000 + 1350}{70}\\
+&amp;= \frac{16265}{70} \approx 232.36
+\end{align*}
+\]</span> Thus, the estimated mean cholesterol level for respondents is <strong>232.36</strong>.</p>
+<p>The standard error is calculated using: <span class="math display">\[
+\operatorname{Var}(\bar{y}) = \frac{1}{\sum n_{i,resp}}\frac{\sum (n_{i,resp}-1) s_i^2}{\sum (n_{i,resp}-1)}
+\]</span> Substituting the values: <span class="math display">\[
+\begin{align*}
+\sum (n_{i,resp}-1) s_i^2 &amp;= (21 \times 30^2) + (26 \times 35^2) + (15 \times 44^2) + (4 \times 41^2)\\
+&amp;= 18900 + 31850 + 29040 + 6724 = 86514\\
+\operatorname{Var}(\bar{y}) &amp;= \frac{1}{70} \times \frac{86514}{70 - 4}\\
+&amp;= \frac{86514}{66 \times 70} \approx 18.73\\
+\text{SE}(\bar{y}) &amp;= \sqrt{18.73} \approx 4.33
+\end{align*}
+\]</span> Thus, the standard error is <strong>4.33</strong>.</p>
+<p>So the <span class="math inline">\(95\%\)</span> confidence interval for the mean cholesterol level of respondents is: <span class="math display">\[
+232.36 \pm 1.96 \times 4.33 = 232.36 \pm 8.48 = [223.87, 240.85]
+\]</span> This interval <strong>cannot</strong> be applied to the entire county population because of <strong>nonresponse bias</strong>, which may introduce systematic differences between respondents and nonrespondents.</p>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<p><strong>Answer:</strong></p>
+<p>The formula for the weighting class estimate of the mean cholesterol level from Equation (3.6) is: <span class="math display">\[
+\bar{y}_{\text{wc}} = n^{-1} \sum_{j=1}^{J} n_j \bar{y}_{jR}
+\]</span> Where:</p>
+<ul>
+<li>( n_j ) is the sample size for each age group,</li>
+<li>( {y}_{jR} ) is the respondent mean for each age group,</li>
+<li>( n ) is the total sample size.</li>
+</ul>
+<p>Substituting the given values: <span class="math display">\[
+\begin{align*}
+\bar{y}_{\text{wc}} &amp;= \frac{1}{100} \left( 25 \times 220 + 35 \times 225 + 28 \times 250 + 12 \times 270 \right)\\
+&amp;= \frac{1}{100} (5500 + 7875 + 7000 + 3240)\\
+&amp;= \frac{23615}{100} = 236.15
+\end{align*}
+\]</span> Thus, the weighted mean cholesterol level for the population is <strong>236.15</strong>.</p>
+<p>The formula to the variance from Equation (3.7) is: <span class="math display">\[
+\operatorname{Var}(\bar{y}_{\text{wc}}) = \operatorname{Var} \left( \frac{1}{r} \sum_{i=1}^{r} w_i y_i \right) \approx \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right)
+\]</span> where - <span class="math inline">\(r\)</span> is the total number of respondents, - <span class="math inline">\(w_i\)</span> is the weight for unit <span class="math inline">\(i\)</span>.</p>
+<p>The formula for the weight <span class="math inline">\(w_i\)</span> is: <span class="math display">\[
+w_i = r(\hat{\phi}_i)^{-1} \Bigg/ \sum_{k=1}^{r} (\hat{\phi}_k)^{-1}, \quad \text{where } \hat{\phi}_i = \frac{r_j}{n_j} \text{ for units } i \text{ in class } j.
+\]</span> where <span class="math inline">\(\hat{\phi}_i\)</span> is the estimated response probability for unit <span class="math inline">\(i\)</span>. <span class="math inline">\(r_j\)</span> is the number of respondents in class <span class="math inline">\(j\)</span> and <span class="math inline">\(n_j\)</span> is the total sample size in class <span class="math inline">\(j\)</span>.</p>
+<p>So the variance of the weighted mean cholesterol level is: <span class="math display">\[
+\begin{align*}
+\operatorname{Var}(\bar{y}_{\text{wc}}) &amp;=  \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right) = \frac{r_1\times (\frac{n_1}{r_1})^2\times s_1^2 + r_2\times (\frac{n_2}{r_2})^2\times s_2^2 + r_3\times (\frac{n_3}{r_3})^2\times s_3^2 + r_4\times (\frac{n_4}{r_4})^2\times s_4^2}{(r_1\times\frac{n_1}{r_1}+ r_2\times\frac{n_2}{r_2}+ r_3\times\frac{n_3}{r_3}+ r_4\times\frac{n_4}{r_4})^2} \\
+&amp; = \frac{22\times (\frac{25}{22})^2\times 30^2 + 27\times (\frac{35}{27})^2\times 35^2 + 16\times (\frac{28}{16})^2\times 44^2 + 5\times (\frac{12}{5})^2\times 41^2}{(22\times\frac{25}{22}+27\times\frac{35}{27}+16\times\frac{28}{16}+5\times\frac{12}{5})^2} \\
+&amp; = 22.44
+\end{align*}
+\]</span> The standard error estimate is: <span class="math display">\[
+\text{SE}(\bar{y}_{\text{wc}}) = \sqrt{22.44} \approx 4.74
+\]</span> Thus, the standard error is approximately <strong>4.74</strong>.</p>
+<p>The <span class="math inline">\(95\%\)</span> confidence interval for the weighted mean cholesterol level is: <span class="math display">\[
+236.15 \pm 1.96 \times 4.74 = 236.15 \pm 9.29 = [226.86, 245.44]
+\]</span> This interval <strong>can</strong> be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents. The assumptions made about the nonresponse mechanism in this analysis are:</p>
+<ul>
+<li>The nonresponse mechanism is <strong>ignorable</strong>.</li>
+<li>The nonresponse mechanism is <strong>missing at random</strong>.</li>
+<li>Four classes have the <strong>same</strong> probability for a unit selected from a given class to respond.</li>
+</ul>
+</section>
+<section id="question-5" class="level2">
+<h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
+<p><strong>Answer:</strong></p>
+<p>The post-stratified mean is calculated as: <span class="math display">\[
+\bar{y}_{\text{post}} = \sum_{j=1}^{J} p_j \bar{y}_j
+\]</span> Substituting the values: <span class="math display">\[
+\begin{align*}
+\bar{y}_{\text{post}} &amp;= (0.20 \times 220) + (0.40 \times 225) + (0.30 \times 250) + (0.10 \times 270)\\
+&amp;= 44 + 90 + 75 + 27\\
+&amp;= 236
+\end{align*}
+\]</span> Thus, the post-stratified estimate of the mean cholesterol level is <strong>236</strong>.</p>
+<p>The standard error for post-stratified estimation is computed using: <span class="math display">\[
+\text{SE}(\bar{y}_{\text{post}}) = \sqrt{\sum_{j=1}^{J} p_j^2 \cdot \frac{s_j^2}{n_{j,resp}}}
+\]</span> Substituting the values: <span class="math display">\[
+\begin{align*}
+\text{SE}(\bar{y}_{\text{post}}) &amp;= \sqrt{(0.2^2 \times \frac{30^2}{22}) + (0.4^2 \times \frac{35^2}{27}) + (0.3^2 \times \frac{44^2}{16}) + (0.1^2 \times \frac{41^2}{5})}\\
+&amp;= \sqrt{1.63 + 7.26 + 10.89 + 3.36}\\
+&amp;= \sqrt{23.14} \approx 4.81
+\end{align*}
+\]</span> Thus, the standard error is <strong>4.81</strong>.</p>
+<p>The <span class="math inline">\(95\%\)</span> confidence interval for the post-stratified mean cholesterol level is: <span class="math display">\[
+236 \pm 1.96 \times 4.81 = 236 \pm 9.42 = [226.57, 245.43]
+\]</span></p>
 </section>
 
 </main>

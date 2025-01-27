@@ -150,4 +150,148 @@ So the sample regression of $Y_1$ on $Y_2$ based on complete units yields unbias
 
 ## Question 3
 
+**Answer:**
+
+The overall mean cholesterol for respondents is calculated using the formula:
+$$
+\bar{y} = \frac{\sum n_{i,resp} \bar{y}_i}{\sum n_{i,resp}}
+$$
+Substituting the given values:
+$$
+\begin{align*}
+\bar{y} &= \frac{(22 \times 220) + (27 \times 225) + (16 \times 250) + (5 \times 270)}{22 + 27 + 16 + 5}\\
+&= \frac{4840 + 6075 + 4000 + 1350}{70}\\
+&= \frac{16265}{70} \approx 232.36
+\end{align*}
+$$
+Thus, the estimated mean cholesterol level for respondents is **232.36**.
+
+
+The standard error is calculated using:
+$$
+\operatorname{Var}(\bar{y}) = \frac{1}{\sum n_{i,resp}}\frac{\sum (n_{i,resp}-1) s_i^2}{\sum (n_{i,resp}-1)}
+$$
+Substituting the values:
+$$
+\begin{align*}
+\sum (n_{i,resp}-1) s_i^2 &= (21 \times 30^2) + (26 \times 35^2) + (15 \times 44^2) + (4 \times 41^2)\\
+&= 18900 + 31850 + 29040 + 6724 = 86514\\
+\operatorname{Var}(\bar{y}) &= \frac{1}{70} \times \frac{86514}{70 - 4}\\
+&= \frac{86514}{66 \times 70} \approx 18.73\\
+\text{SE}(\bar{y}) &= \sqrt{18.73} \approx 4.33
+\end{align*}
+$$
+Thus, the standard error is **4.33**.
+
+So the $95\%$ confidence interval for the mean cholesterol level of respondents is:
+$$
+232.36 \pm 1.96 \times 4.33 = 232.36 \pm 8.48 = [223.87, 240.85]
+$$
+This interval **cannot** be applied to the entire county population because of **nonresponse bias**, which may introduce systematic differences between respondents and nonrespondents.
+
+
+## Question 4
+
+**Answer:**
+
+The formula for the weighting class estimate of the mean cholesterol level from Equation (3.6) is:
+$$
+\bar{y}_{\text{wc}} = n^{-1} \sum_{j=1}^{J} n_j \bar{y}_{jR}
+$$
+Where:
+
+- \( n_j \) is the sample size for each age group,
+- \( \bar{y}_{jR} \) is the respondent mean for each age group,
+- \( n \) is the total sample size.
+
+Substituting the given values:
+$$
+\begin{align*}
+\bar{y}_{\text{wc}} &= \frac{1}{100} \left( 25 \times 220 + 35 \times 225 + 28 \times 250 + 12 \times 270 \right)\\
+&= \frac{1}{100} (5500 + 7875 + 7000 + 3240)\\
+&= \frac{23615}{100} = 236.15
+\end{align*}
+$$
+Thus, the weighted mean cholesterol level for the population is **236.15**.
+
+The formula to the variance from Equation (3.7) is:
+$$
+\operatorname{Var}(\bar{y}_{\text{wc}}) = \operatorname{Var} \left( \frac{1}{r} \sum_{i=1}^{r} w_i y_i \right) \approx \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right)
+$$
+where
+- $r$ is the total number of respondents,
+- $w_i$ is the weight for unit $i$.
+
+The formula for the weight $w_i$ is:
+$$
+w_i = r(\hat{\phi}_i)^{-1} \Bigg/ \sum_{k=1}^{r} (\hat{\phi}_k)^{-1}, \quad \text{where } \hat{\phi}_i = \frac{r_j}{n_j} \text{ for units } i \text{ in class } j.
+$$
+where $\hat{\phi}_i$ is the estimated response probability for unit $i$. $r_j$ is the number of respondents in class $j$ and $n_j$ is the total sample size in class $j$.
+
+
+So the variance of the weighted mean cholesterol level is:
+$$
+\begin{align*}
+\operatorname{Var}(\bar{y}_{\text{wc}}) &=  \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right) = \frac{r_1\times (\frac{n_1}{r_1})^2\times s_1^2 + r_2\times (\frac{n_2}{r_2})^2\times s_2^2 + r_3\times (\frac{n_3}{r_3})^2\times s_3^2 + r_4\times (\frac{n_4}{r_4})^2\times s_4^2}{(r_1\times\frac{n_1}{r_1}+ r_2\times\frac{n_2}{r_2}+ r_3\times\frac{n_3}{r_3}+ r_4\times\frac{n_4}{r_4})^2} \\
+& = \frac{22\times (\frac{25}{22})^2\times 30^2 + 27\times (\frac{35}{27})^2\times 35^2 + 16\times (\frac{28}{16})^2\times 44^2 + 5\times (\frac{12}{5})^2\times 41^2}{(22\times\frac{25}{22}+27\times\frac{35}{27}+16\times\frac{28}{16}+5\times\frac{12}{5})^2} \\
+& = 22.44
+\end{align*}
+$$
+The standard error estimate is:
+$$
+\text{SE}(\bar{y}_{\text{wc}}) = \sqrt{22.44} \approx 4.74
+$$
+Thus, the standard error is approximately **4.74**.
+
+The $95\%$ confidence interval for the weighted mean cholesterol level is:
+$$
+236.15 \pm 1.96 \times 4.74 = 236.15 \pm 9.29 = [226.86, 245.44]
+$$
+This interval **can** be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents. The assumptions made about the nonresponse mechanism in this analysis are:
+
+- The nonresponse mechanism is **ignorable**.
+- The nonresponse mechanism is **missing at random**.
+- Four classes have the **same** probability for a unit selected from a given class to respond.
+
+
+
+## Question 5
+
+**Answer:**
+
+The post-stratified mean is calculated as:
+$$
+\bar{y}_{\text{post}} = \sum_{j=1}^{J} p_j \bar{y}_j
+$$
+Substituting the values:
+$$
+\begin{align*}
+\bar{y}_{\text{post}} &= (0.20 \times 220) + (0.40 \times 225) + (0.30 \times 250) + (0.10 \times 270)\\
+&= 44 + 90 + 75 + 27\\
+&= 236
+\end{align*}
+$$
+Thus, the post-stratified estimate of the mean cholesterol level is **236**.
+
+The standard error for post-stratified estimation is computed using:
+$$
+\text{SE}(\bar{y}_{\text{post}}) = \sqrt{\sum_{j=1}^{J} p_j^2 \cdot \frac{s_j^2}{n_{j,resp}}}
+$$
+Substituting the values:
+$$
+\begin{align*}
+\text{SE}(\bar{y}_{\text{post}}) &= \sqrt{(0.2^2 \times \frac{30^2}{22}) + (0.4^2 \times \frac{35^2}{27}) + (0.3^2 \times \frac{44^2}{16}) + (0.1^2 \times \frac{41^2}{5})}\\
+&= \sqrt{1.63 + 7.26 + 10.89 + 3.36}\\
+&= \sqrt{23.14} \approx 4.81
+\end{align*}
+$$
+Thus, the standard error is **4.81**.
+
+The $95\%$ confidence interval for the post-stratified mean cholesterol level is:
+$$
+236 \pm 1.96 \times 4.81 = 236 \pm 9.42 = [226.57, 245.43]
+$$
+
+
+
 
