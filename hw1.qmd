@@ -293,5 +293,203 @@ $$
 $$
 
 
+## Question 6
+
+**Answer:**
+
+From the Equation (3.18):
+$$
+r^*_{jk} = \frac{s^{(jk)}_{jk}}{\sqrt{s^{(j)}_{jj} s^{(k)}_{kk}}}
+$$
+Let's create a data set and use the above formula to estimate the correlation.
+```{r}
+library(tidyverse)
+data <- tibble(
+  Subject = 1:4,
+  Y1 = c(1, 2, NA, 4),
+  Y2 = c(NA, 2, 3, 4)
+)
+available_cases <- data |>
+  filter(!is.na(Y1) & !is.na(Y2))
+
+s_12 <- cov(available_cases$Y1, available_cases$Y2)
+
+s_11 <- var(data$Y1, na.rm = TRUE)
+s_22 <- var(data$Y2, na.rm = TRUE)
+
+r_star <- s_12 / sqrt(s_11 * s_22)
+r_star
+```
+The estimated correlation coefficient is **1.31**, which lies outside the range of -1 to 1.
+
+
+## Question 7
+
+### (a)
+
+**Answer:**
+
+The estimated variance of $Y_1$ from the filled-in data underestimates the magnitude of the variance by a factor 
+$$
+\frac{n^{j}-1}{n-1}
+$$
+where $n^{j}$ is the number of complete cases for the variable $Y_j$. So the the percentage bias in estimates of the variance is:
+$$
+1- \frac{35-1}{45-1} \times 100\%  = 22.7\%
+$$
+
+
+### (b)
+
+**Answer:**
+
+The estimated covariance from the filled-in data underestimates the magnitude of the covariance by a factor 
+$$
+\frac{n^{jk}-1}{n-1}
+$$
+where $n^{jk}$ is the number of complete cases for the pair of variables $Y_j$ and $Y_k$. So the the percentage bias in estimates of the covariance is:
+$$
+1- \frac{20-1}{45-1} \times 100\%  = 56.8\%
+$$
+
+
+### (c)
+
+**Answer:**
+
+The estimated slope of the regression of $Y_2$ on $Y_1$ ($\frac{\sigma_{12}}{\sigma_{11}}$) is 
+$$
+\hat{\beta} = \frac{\hat{\sigma}_{12}}{\hat{\sigma}_{11}} = \frac{\frac{19}{44}\sigma_{12}}{\frac{34}{44}\sigma_{11}} = \frac{19}{34}\beta
+$$
+So the bias in the estimate of the slope is:
+$$
+1- \frac{19}{34} \times 100\% = 44.1\%
+$$
+
+
+
+## Question 8
+
+**Answer:**
+
+**The Last Observation Carried Forward (LOCF)** method is used in longitudinal studies with dropouts. When a subject drops out, their last recorded value is carried forward to impute missing values:
+$$
+\hat{y}_{it} = y_{i,k-1}, \quad t = k, \dots, K.
+$$
+LOCF performs poorly in clinical trials for progressive diseases like Alzheimer's and frototemporal dementia(FTD), where patients who experience faster cognitive decline are more likely to drop out. By carrying forward their last recorded cognitive score, LOCF artificially stabilizes disease progression, leading to an underestimation of decline and biasing treatment effect estimates.
+
+
+## Question 9
+
+**Answer:**
+
+The CC estimator is:
+$$
+\hat{\Delta}_{CC} = \bar{X}_1^{(m)} - \bar{X}_2^{(m)}
+$$
+<!-- where: -->
+<!-- - \( \bar{X}_1^{(m)} \) is the mean of \( X_1 \) for the \( m \) cases where \( X_2 \) is observed. -->
+<!-- - \( \bar{X}_2^{(m)} \) is the mean of these \( m \) individuals' \( X_2 \) values. -->
+Since both means are computed from the same $m$ cases, the variance is:
+$$
+\begin{align*}
+\text{Var}(\hat{\Delta}_{CC}) &= \text{Var}(\bar{X}_1^{(m)} - \bar{X}_2^{(m)})\\
+&= \text{Var}(\bar{X}_1^{(m)}) + \text{Var}(\bar{X}_2^{(m)}) - 2\text{Cov}(\bar{X}_1^{(m)}, \bar{X}_2^{(m)})\\
+&= \frac{\sigma^2}{m} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{m}\\
+&= \frac{2\sigma^2(1-\rho)}{m}
+\end{align*}
+$$
+The AC estimator is:
+$$
+\hat{\Delta}_{AC} = \bar{X}_1^{(n)} - \bar{X}_2^{(m)}
+$$
+<!-- where: -->
+<!-- - \( \bar{X}_1^{(n)} \) is the sample mean of all \( n \) observations on \( X_1 \). -->
+<!-- - \( \bar{X}_2^{(m)} \) is the sample mean of the \( m \) observed \( X_2 \) values. -->
+
+Since $X_1$ is based on $n$ cases and $X_2$ on $m$ cases, the variance is:
+$$
+\text{Var}(\hat{\Delta}_{AC}) = \frac{\sigma^2}{n} + \frac{\sigma^2}{m}
+$$
+
+For the variance of AC to be less than that of CC, we need:
+$$
+\begin{align*}
+&\frac{\sigma^2}{n} + \frac{\sigma^2}{m} < \frac{2\sigma^2(1 - \rho)}{m}\\
+&\Rightarrow \frac{1}{n} + \frac{1}{m} < \frac{2(1 - \rho)}{m}\\
+&\Rightarrow \frac{1}{n} < \frac{2(1 - \rho)}{m} - \frac{1}{m}\\
+&\Rightarrow \frac{1}{n} < \frac{1 - 2\rho}{m}\\
+&\Rightarrow n > \frac{m}{1 - 2\rho} \quad (\rho < 0.5)
+\end{align*}
+$$
+So when the correlation between $X_1$ and $X_2$ is less than 0.5, the variance of the AC estimator is less than that of the CC estimator.
+
+
+## Question 10
+
+**Answer:**
+
+The overall sample mean $\bar{y}^*$ is the weighted mean of the respondents and nonrespondents:
+$$
+\begin{align*}
+\bar{y}^* &= \frac{1}{n} \sum_{i=1}^{n} y_i\\
+&=\frac{n_1 \bar{y}_1 + n_0 \bar{y}_0}{n}.
+\tag{1}
+\end{align*}
+$$
+
+The sample variance is defined as:
+$$
+s^{*2} = \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \bar{y}^*)^2.
+$$
+Since we have two groups, we split the sum:
+$$
+s^{*2} = \frac{1}{n-1} \left[ \sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 + \sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 \right].
+$$
+We first decompose the sum for the respondents:
+$$
+\begin{align*}
+\sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 &= \sum_{i=1}^{n_1} (y_i - \bar{y}_1 + \bar{y}_1 - \bar{y}^*)^2\\
+&= \sum_{i=1}^{n_1} (y_i - \bar{y}_1)^2 + 2 \sum_{i=1}^{n_1} (y_i - \bar{y}_1)(\bar{y}_1 - \bar{y}^*) + \sum_{i=1}^{n_1} (\bar{y}_1 - \bar{y}^*)^2\\
+&= \sum_{i=1}^{n_1} (y_i - \bar{y}_1)^2 + n_1 (\bar{y}_1 - \bar{y}^*)^2\\
+&= (n_1 - 1) s_1^2 + n_1 (\bar{y}_1 - \bar{y}^*)^2
+\end{align*}
+$$
+Similarly, for the nonrespondents:
+$$
+\begin{align*}
+\sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 &= \sum_{i=1}^{n_0} (y_i - \bar{y}_0 + \bar{y}_0 - \bar{y}^*)^2\\
+&= \sum_{i=1}^{n_0} (y_i - \bar{y}_0)^2 + 2 \sum_{i=1}^{n_0} (y_i - \bar{y}_0)(\bar{y}_0 - \bar{y}^*) + \sum_{i=1}^{n_0} (\bar{y}_0 - \bar{y}^*)^2\\
+&= \sum_{i=1}^{n_0} (y_i - \bar{y}_0)^2 + n_0 (\bar{y}_0 - \bar{y}^*)^2\\
+&= (n_0 - 1) s_0^2 + n_0 (\bar{y}_0 - \bar{y}^*)^2
+\end{align*}
+$$
+
+By using Equation (1), we can have
+$$
+\begin{align*}
+\bar{y}_1 - \bar{y}^* &= \bar{y}_1 - \frac{n_1 \bar{y}_1 + n_0 \bar{y}_0}{n}\\
+&= \frac{n_0}{n} (\bar{y}_1 - \bar{y}_0)\\
+\bar{y}_0 - \bar{y}^* &= \frac{n_1}{n} (\bar{y}_0 - \bar{y}_1)
+\end{align*}
+$$
+So 
+$$
+\begin{align*}
+(\bar{y}_1 - \bar{y}^*)^2 &= \frac{n_0^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2\\
+(\bar{y}_0 - \bar{y}^*)^2 &= \frac{n_1^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2
+\end{align*}
+$$
+So we can rewrite the sum of squares as:
+$$
+\begin{align*}
+\sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 &= (n_1 - 1) s_1^2 + \frac{n_1 n_0^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2\\
+\sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 &= (n_0 - 1) s_0^2 + \frac{n_0 n_1^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2
+\end{align*}
+$$
+Substituting into the variance equation, we can get
+$$
+s^{*2} = \frac{(n_1 - 1) s_1^2 + (n_0 - 1) s_0^2 + \frac{n_1 n_0}{n} (\bar{y}_1 - \bar{y}_0)^2}{n-1}.
+$$
 
 

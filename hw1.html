@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ziheng Zhang_606300061">
-<meta name="dcterms.date" content="2025-01-26">
+<meta name="dcterms.date" content="2025-01-29">
 
 <title>Biostat M232 Homework 1</title>
 <style>
@@ -20,6 +20,40 @@ ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
 width: 0.8em;
 margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
+}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+}
+pre.numberSource { margin-left: 3em; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -3007,6 +3041,16 @@ vertical-align: -.125em;
   <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a></li>
   <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4">Question 4</a></li>
   <li><a href="#question-5" id="toc-question-5" class="nav-link" data-scroll-target="#question-5">Question 5</a></li>
+  <li><a href="#question-6" id="toc-question-6" class="nav-link" data-scroll-target="#question-6">Question 6</a></li>
+  <li><a href="#question-7" id="toc-question-7" class="nav-link" data-scroll-target="#question-7">Question 7</a>
+  <ul>
+  <li><a href="#a" id="toc-a" class="nav-link" data-scroll-target="#a">(a)</a></li>
+  <li><a href="#b" id="toc-b" class="nav-link" data-scroll-target="#b">(b)</a></li>
+  <li><a href="#c" id="toc-c" class="nav-link" data-scroll-target="#c">(c)</a></li>
+  </ul></li>
+  <li><a href="#question-8" id="toc-question-8" class="nav-link" data-scroll-target="#question-8">Question 8</a></li>
+  <li><a href="#question-9" id="toc-question-9" class="nav-link" data-scroll-target="#question-9">Question 9</a></li>
+  <li><a href="#question-10" id="toc-question-10" class="nav-link" data-scroll-target="#question-10">Question 10</a></li>
   </ul>
 </nav>
 </div>
@@ -3034,7 +3078,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 26, 2025</p>
+      <p class="date">January 29, 2025</p>
     </div>
   </div>
   
@@ -3219,6 +3263,149 @@ w_i = r(\hat{\phi}_i)^{-1} \Bigg/ \sum_{k=1}^{r} (\hat{\phi}_k)^{-1}, \quad \tex
 \]</span> Thus, the standard error is <strong>4.81</strong>.</p>
 <p>The <span class="math inline">\(95\%\)</span> confidence interval for the post-stratified mean cholesterol level is: <span class="math display">\[
 236 \pm 1.96 \times 4.81 = 236 \pm 9.42 = [226.57, 245.43]
+\]</span></p>
+</section>
+<section id="question-6" class="level2">
+<h2 class="anchored" data-anchor-id="question-6">Question 6</h2>
+<p><strong>Answer:</strong></p>
+<p>From the Equation (3.18): <span class="math display">\[
+r^*_{jk} = \frac{s^{(jk)}_{jk}}{\sqrt{s^{(j)}_{jj} s^{(k)}_{kk}}}
+\]</span> Let’s create a data set and use the above formula to estimate the correlation.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subject =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y1 =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">4</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y2 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>available_cases <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Y1) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(Y2))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>s_12 <span class="ot">&lt;-</span> <span class="fu">cov</span>(available_cases<span class="sc">$</span>Y1, available_cases<span class="sc">$</span>Y2)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>s_11 <span class="ot">&lt;-</span> <span class="fu">var</span>(data<span class="sc">$</span>Y1, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>s_22 <span class="ot">&lt;-</span> <span class="fu">var</span>(data<span class="sc">$</span>Y2, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>r_star <span class="ot">&lt;-</span> s_12 <span class="sc">/</span> <span class="fu">sqrt</span>(s_11 <span class="sc">*</span> s_22)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>r_star</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.309307</code></pre>
+</div>
+</div>
+<p>The estimated correlation coefficient is <strong>1.31</strong>, which lies outside the range of -1 to 1.</p>
+</section>
+<section id="question-7" class="level2">
+<h2 class="anchored" data-anchor-id="question-7">Question 7</h2>
+<section id="a" class="level3">
+<h3 class="anchored" data-anchor-id="a">(a)</h3>
+<p><strong>Answer:</strong></p>
+<p>The estimated variance of <span class="math inline">\(Y_1\)</span> from the filled-in data underestimates the magnitude of the variance by a factor <span class="math display">\[
+\frac{n^{j}-1}{n-1}
+\]</span> where <span class="math inline">\(n^{j}\)</span> is the number of complete cases for the variable <span class="math inline">\(Y_j\)</span>. So the the percentage bias in estimates of the variance is: <span class="math display">\[
+1- \frac{35-1}{45-1} \times 100\%  = 22.7\%
+\]</span></p>
+</section>
+<section id="b" class="level3">
+<h3 class="anchored" data-anchor-id="b">(b)</h3>
+<p><strong>Answer:</strong></p>
+<p>The estimated covariance from the filled-in data underestimates the magnitude of the covariance by a factor <span class="math display">\[
+\frac{n^{jk}-1}{n-1}
+\]</span> where <span class="math inline">\(n^{jk}\)</span> is the number of complete cases for the pair of variables <span class="math inline">\(Y_j\)</span> and <span class="math inline">\(Y_k\)</span>. So the the percentage bias in estimates of the covariance is: <span class="math display">\[
+1- \frac{20-1}{45-1} \times 100\%  = 56.8\%
+\]</span></p>
+</section>
+<section id="c" class="level3">
+<h3 class="anchored" data-anchor-id="c">(c)</h3>
+<p><strong>Answer:</strong></p>
+<p>The estimated slope of the regression of <span class="math inline">\(Y_2\)</span> on <span class="math inline">\(Y_1\)</span> (<span class="math inline">\(\frac{\sigma_{12}}{\sigma_{11}}\)</span>) is <span class="math display">\[
+\hat{\beta} = \frac{\hat{\sigma}_{12}}{\hat{\sigma}_{11}} = \frac{\frac{19}{44}\sigma_{12}}{\frac{34}{44}\sigma_{11}} = \frac{19}{34}\beta
+\]</span> So the bias in the estimate of the slope is: <span class="math display">\[
+1- \frac{19}{34} \times 100\% = 44.1\%
+\]</span></p>
+</section>
+</section>
+<section id="question-8" class="level2">
+<h2 class="anchored" data-anchor-id="question-8">Question 8</h2>
+<p><strong>Answer:</strong></p>
+<p><strong>The Last Observation Carried Forward (LOCF)</strong> method is used in longitudinal studies with dropouts. When a subject drops out, their last recorded value is carried forward to impute missing values: <span class="math display">\[
+\hat{y}_{it} = y_{i,k-1}, \quad t = k, \dots, K.
+\]</span> LOCF performs poorly in clinical trials for progressive diseases like Alzheimer’s and frototemporal dementia(FTD), where patients who experience faster cognitive decline are more likely to drop out. By carrying forward their last recorded cognitive score, LOCF artificially stabilizes disease progression, leading to an underestimation of decline and biasing treatment effect estimates.</p>
+</section>
+<section id="question-9" class="level2">
+<h2 class="anchored" data-anchor-id="question-9">Question 9</h2>
+<p><strong>Answer:</strong></p>
+<p>The CC estimator is: <span class="math display">\[
+\hat{\Delta}_{CC} = \bar{X}_1^{(m)} - \bar{X}_2^{(m)}
+\]</span> <!-- where: --> <!-- - \( \bar{X}_1^{(m)} \) is the mean of \( X_1 \) for the \( m \) cases where \( X_2 \) is observed. --> <!-- - \( \bar{X}_2^{(m)} \) is the mean of these \( m \) individuals' \( X_2 \) values. --> Since both means are computed from the same <span class="math inline">\(m\)</span> cases, the variance is: <span class="math display">\[
+\begin{align*}
+\text{Var}(\hat{\Delta}_{CC}) &amp;= \text{Var}(\bar{X}_1^{(m)} - \bar{X}_2^{(m)})\\
+&amp;= \text{Var}(\bar{X}_1^{(m)}) + \text{Var}(\bar{X}_2^{(m)}) - 2\text{Cov}(\bar{X}_1^{(m)}, \bar{X}_2^{(m)})\\
+&amp;= \frac{\sigma^2}{m} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{m}\\
+&amp;= \frac{2\sigma^2(1-\rho)}{m}
+\end{align*}
+\]</span> The AC estimator is: <span class="math display">\[
+\hat{\Delta}_{AC} = \bar{X}_1^{(n)} - \bar{X}_2^{(m)}
+\]</span> <!-- where: --> <!-- - \( \bar{X}_1^{(n)} \) is the sample mean of all \( n \) observations on \( X_1 \). --> <!-- - \( \bar{X}_2^{(m)} \) is the sample mean of the \( m \) observed \( X_2 \) values. --></p>
+<p>Since <span class="math inline">\(X_1\)</span> is based on <span class="math inline">\(n\)</span> cases and <span class="math inline">\(X_2\)</span> on <span class="math inline">\(m\)</span> cases, the variance is: <span class="math display">\[
+\text{Var}(\hat{\Delta}_{AC}) = \frac{\sigma^2}{n} + \frac{\sigma^2}{m}
+\]</span></p>
+<p>For the variance of AC to be less than that of CC, we need: <span class="math display">\[
+\begin{align*}
+&amp;\frac{\sigma^2}{n} + \frac{\sigma^2}{m} &lt; \frac{2\sigma^2(1 - \rho)}{m}\\
+&amp;\Rightarrow \frac{1}{n} + \frac{1}{m} &lt; \frac{2(1 - \rho)}{m}\\
+&amp;\Rightarrow \frac{1}{n} &lt; \frac{2(1 - \rho)}{m} - \frac{1}{m}\\
+&amp;\Rightarrow \frac{1}{n} &lt; \frac{1 - 2\rho}{m}\\
+&amp;\Rightarrow n &gt; \frac{m}{1 - 2\rho} \quad (\rho &lt; 0.5)
+\end{align*}
+\]</span> So when the correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is less than 0.5, the variance of the AC estimator is less than that of the CC estimator.</p>
+</section>
+<section id="question-10" class="level2">
+<h2 class="anchored" data-anchor-id="question-10">Question 10</h2>
+<p><strong>Answer:</strong></p>
+<p>The overall sample mean <span class="math inline">\(\bar{y}^*\)</span> is the weighted mean of the respondents and nonrespondents: <span class="math display">\[
+\begin{align*}
+\bar{y}^* &amp;= \frac{1}{n} \sum_{i=1}^{n} y_i\\
+&amp;=\frac{n_1 \bar{y}_1 + n_0 \bar{y}_0}{n}.
+\tag{1}
+\end{align*}
+\]</span></p>
+<p>The sample variance is defined as: <span class="math display">\[
+s^{*2} = \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \bar{y}^*)^2.
+\]</span> Since we have two groups, we split the sum: <span class="math display">\[
+s^{*2} = \frac{1}{n-1} \left[ \sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 + \sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 \right].
+\]</span> We first decompose the sum for the respondents: <span class="math display">\[
+\begin{align*}
+\sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 &amp;= \sum_{i=1}^{n_1} (y_i - \bar{y}_1 + \bar{y}_1 - \bar{y}^*)^2\\
+&amp;= \sum_{i=1}^{n_1} (y_i - \bar{y}_1)^2 + 2 \sum_{i=1}^{n_1} (y_i - \bar{y}_1)(\bar{y}_1 - \bar{y}^*) + \sum_{i=1}^{n_1} (\bar{y}_1 - \bar{y}^*)^2\\
+&amp;= \sum_{i=1}^{n_1} (y_i - \bar{y}_1)^2 + n_1 (\bar{y}_1 - \bar{y}^*)^2\\
+&amp;= (n_1 - 1) s_1^2 + n_1 (\bar{y}_1 - \bar{y}^*)^2
+\end{align*}
+\]</span> Similarly, for the nonrespondents: <span class="math display">\[
+\begin{align*}
+\sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 &amp;= \sum_{i=1}^{n_0} (y_i - \bar{y}_0 + \bar{y}_0 - \bar{y}^*)^2\\
+&amp;= \sum_{i=1}^{n_0} (y_i - \bar{y}_0)^2 + 2 \sum_{i=1}^{n_0} (y_i - \bar{y}_0)(\bar{y}_0 - \bar{y}^*) + \sum_{i=1}^{n_0} (\bar{y}_0 - \bar{y}^*)^2\\
+&amp;= \sum_{i=1}^{n_0} (y_i - \bar{y}_0)^2 + n_0 (\bar{y}_0 - \bar{y}^*)^2\\
+&amp;= (n_0 - 1) s_0^2 + n_0 (\bar{y}_0 - \bar{y}^*)^2
+\end{align*}
+\]</span></p>
+<p>By using Equation (1), we can have <span class="math display">\[
+\begin{align*}
+\bar{y}_1 - \bar{y}^* &amp;= \bar{y}_1 - \frac{n_1 \bar{y}_1 + n_0 \bar{y}_0}{n}\\
+&amp;= \frac{n_0}{n} (\bar{y}_1 - \bar{y}_0)\\
+\bar{y}_0 - \bar{y}^* &amp;= \frac{n_1}{n} (\bar{y}_0 - \bar{y}_1)
+\end{align*}
+\]</span> So <span class="math display">\[
+\begin{align*}
+(\bar{y}_1 - \bar{y}^*)^2 &amp;= \frac{n_0^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2\\
+(\bar{y}_0 - \bar{y}^*)^2 &amp;= \frac{n_1^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2
+\end{align*}
+\]</span> So we can rewrite the sum of squares as: <span class="math display">\[
+\begin{align*}
+\sum_{i=1}^{n_1} (y_i - \bar{y}^*)^2 &amp;= (n_1 - 1) s_1^2 + \frac{n_1 n_0^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2\\
+\sum_{i=1}^{n_0} (y_i - \bar{y}^*)^2 &amp;= (n_0 - 1) s_0^2 + \frac{n_0 n_1^2}{n^2} (\bar{y}_1 - \bar{y}_0)^2
+\end{align*}
+\]</span> Substituting into the variance equation, we can get <span class="math display">\[
+s^{*2} = \frac{(n_1 - 1) s_1^2 + (n_0 - 1) s_0^2 + \frac{n_1 n_0}{n} (\bar{y}_1 - \bar{y}_0)^2}{n-1}.
 \]</span></p>
 </section>
 
