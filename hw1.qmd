@@ -409,17 +409,23 @@ $$
 
 Since $X_1$ is based on $n$ cases and $X_2$ on $m$ cases, the variance is:
 $$
-\text{Var}(\hat{\Delta}_{AC}) = \frac{\sigma^2}{n} + \frac{\sigma^2}{m}
+\begin{align*}
+\text{Var}(\hat{\Delta}_{AC}) &= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i} - \frac{1}{m}\Sigma_{i=1}^{m}X_{2i} + \frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i} - \frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) + \text{Var}(\frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i}) + \text{Var}(\frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) - 2\text{Cov}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i}, \frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) + \text{Var}(\frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&= \frac{m\sigma^2}{n^2} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n} + \frac{(n-m)\sigma^2}{n^2}\\
+&= \frac{\sigma^2}{n} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n}
+\end{align*}
 $$
 
 For the variance of AC to be less than that of CC, we need:
 $$
 \begin{align*}
-&\frac{\sigma^2}{n} + \frac{\sigma^2}{m} < \frac{2\sigma^2(1 - \rho)}{m}\\
-&\Rightarrow \frac{1}{n} + \frac{1}{m} < \frac{2(1 - \rho)}{m}\\
-&\Rightarrow \frac{1}{n} < \frac{2(1 - \rho)}{m} - \frac{1}{m}\\
-&\Rightarrow \frac{1}{n} < \frac{1 - 2\rho}{m}\\
-&\Rightarrow n > \frac{m}{1 - 2\rho} \quad (\rho < 0.5)
+\text{Var}(\hat{\Delta}_{AC}) - \text{Var}(\hat{\Delta}_{CC}) &= \frac{\sigma^2}{n} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n} - \frac{2\sigma^2(1-\rho)}{m} < 0\\
+&= \frac{(1-2\rho)\sigma^2}{n} - \frac{(1-2\rho)\sigma^2}{m} < 0\\
+&= \frac{(1-2\rho)(m-n)\sigma^2}{nm} < 0\\
+\Rightarrow (1-2\rho) &> 0, \text{ since } (m-n) < 0\\
+\Rightarrow \rho &< 0.5
 \end{align*}
 $$
 So when the correlation between $X_1$ and $X_2$ is less than 0.5, the variance of the AC estimator is less than that of the CC estimator.
