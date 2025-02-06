@@ -43,7 +43,7 @@ where:
 - $s^2$ is the sample variance,
 - $N$ is the population size.
 
-However, due to random nonresponse, only $n_1$ of the $n$ sampled values are actually observed, resulting in a new sample mean $\bar{y}_1$ and sample variance $s_1^2$. In this case, the variance of the estimator is:
+However, due to random nonresponse, only $n_1$ of the $n$ sampled values are actually observed, resulting in a new sample mean $\bar{y}_1$ and sample variance $s_1^2$. In this case, the variance of the estimator with complete data is:
 
 $$
 \operatorname{Var}(\bar{y}_1 - \bar{Y}) = s_1^2 \left( \frac{1}{n_1} - \frac{1}{N} \right)
@@ -67,44 +67,26 @@ So the ratio of the imputed variance to the complete data variance is:
 $$
 \frac{\text{Imputed Variance}}{\text{Complete Data Variance}}
 = \frac{s_1^2 \left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}}
-{s^2 \left( \frac{1}{n} - \frac{1}{N} \right)}
+{s^2 \left( \frac{1}{n_1} - \frac{1}{N} \right)}
 $$
 Assuming $s_1^2 \approx s^2$ (the observed sample is random), the ratio simplifies to:
 
 $$
-\frac{n_1 - 1}{n - 1}
+\sqrt{\frac{\left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}}
+{\left( \frac{1}{n_1} - \frac{1}{N} \right)}} \approx \frac{n_1}{n}
 $$
+when $n_1$ and $\frac{N}{n_1}$ are large.
 
-When $n_1$ is large, the ratio can be approximated as:
-
-$$
-\frac{n_1}{n}
-$$
 Thus, the resulting interval estimate of $\bar{Y}$ will be too short by a factor approximately equal to
 $$
-\sqrt{\frac{n_1}{n}}
+\frac{n_1}{n}
 $$
 
 - If $80\%$ of the data is observed ($n_1 = 0.8n$), the interval width would be reduced by:
 $$
-\sqrt{\frac{0.8n}{n}} = \sqrt{0.8} \approx 0.894
+\frac{0.8n}{n} = 0.8
 $$
-This implies the interval will be approximately **10.6% narrower** than it would have been with complete data.
 
-- If only 50% of the data is observed ($n_1 = 0.5n$):
-
-  $$
-  \sqrt{\frac{0.5n}{n}} = \sqrt{0.5} \approx 0.707
-  $$
-
-  The interval will be approximately **29.3% narrower**.
-
-- If just 30% of the data is observed ($n_1 = 0.3n$):
-
-  $$
-  \sqrt{\frac{0.3n}{n}} = \sqrt{0.3} \approx 0.548
-  $$
-  The interval width is **45.2% narrower**.
 
 
 ## Question 2
@@ -166,26 +148,22 @@ $$
 $$
 Thus, the estimated mean cholesterol level for respondents is **232.36**.
 
-
-The standard error is calculated using:
-$$
-\operatorname{Var}(\bar{y}) = \frac{1}{\sum n_{i,resp}}\frac{\sum (n_{i,resp}-1) s_i^2}{\sum (n_{i,resp}-1)}
-$$
-Substituting the values:
+The sample variance is calculated using:
 $$
 \begin{align*}
-\sum (n_{i,resp}-1) s_i^2 &= (21 \times 30^2) + (26 \times 35^2) + (15 \times 44^2) + (4 \times 41^2)\\
-&= 18900 + 31850 + 29040 + 6724 = 86514\\
-\operatorname{Var}(\bar{y}) &= \frac{1}{70} \times \frac{86514}{70 - 4}\\
-&= \frac{86514}{66 \times 70} \approx 18.73\\
-\text{SE}(\bar{y}) &= \sqrt{18.73} \approx 4.33
+s^2 &= \frac{\sum_{i=1}^{I} \sum_{j=1}^{n_{i,resp}} (y_{ij} - \bar{y})^2}{N-1} = \frac{\sum_{i=1}^{I} \sum_{j=1}^{J} (y_{ij} - \bar{y}_i)^2 + \sum_{i=1}^{I} n_{i,resp} (\bar{y}_i - \bar{y})^2}{N-1}\\
+&= \frac{1}{N-1}\left[\sum_{i=1}^{4} (n_{i,resp}-1) s_i^2 + n_{i,resp} (\bar{y}_i - \bar{y})^2 \right]\\
+&= \frac{103400}{70-1}\\
+&= 1498.551
 \end{align*}
 $$
-Thus, the standard error is **4.33**.
+So the estimated variance of mean cholesterol level for respondents is $$\operatorname{Var}(\bar{y}) = \frac{s^2}{70} = \frac{1498.551}{70} \approx 21.41$$
+
+Thus, the standard error is **4.63**.
 
 So the $95\%$ confidence interval for the mean cholesterol level of respondents is:
 $$
-232.36 \pm 1.96 \times 4.33 = 232.36 \pm 8.48 = [223.87, 240.85]
+232.36 \pm 1.96 \times 4.63 = 232.36 \pm 9.07 = (223.29, 241.43)
 $$
 This interval **cannot** be applied to the entire county population because of **nonresponse bias**, which may introduce systematic differences between respondents and nonrespondents.
 
@@ -196,13 +174,13 @@ This interval **cannot** be applied to the entire county population because of *
 
 The formula for the weighting class estimate of the mean cholesterol level from Equation (3.6) is:
 $$
-\bar{y}_{\text{wc}} = n^{-1} \sum_{j=1}^{J} n_j \bar{y}_{jR}
+\bar{y}_{\text{wc}} = \frac{1}{n} \sum_{j=1}^{J} n_j \bar{y}_{jR}
 $$
 Where:
 
-- \( n_j \) is the sample size for each age group,
-- \( \bar{y}_{jR} \) is the respondent mean for each age group,
-- \( n \) is the total sample size.
+- $n_j$ is the sample size for each age group,
+- $\bar{y}_{jR}$ is the respondent mean for each age group,
+- $n$ is the total sample size.
 
 Substituting the given values:
 $$
@@ -214,44 +192,35 @@ $$
 $$
 Thus, the weighted mean cholesterol level for the population is **236.15**.
 
-The formula to the variance from Equation (3.7) is:
+The formula to the estimated mean squared error from Equation (3.8) is:
 $$
-\operatorname{Var}(\bar{y}_{\text{wc}}) = \operatorname{Var} \left( \frac{1}{r} \sum_{i=1}^{r} w_i y_i \right) \approx \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right)
+\text{mse}(\hat{\bar{y}}_{\text{wc}}) =
+\sum_{j=1}^{J} \left( \frac{n_j}{n} \right)^2 
+\left( 1 - \frac{r_j n}{n_j N} \right) \frac{s^2_{jR}}{r_j} 
++ \frac{N - n}{(N - 1) n^2} 
+\sum_{j=1}^{J} n_j (\bar{y}_{jR} - \bar{y}_{\text{wc}})^2
 $$
-where
-- $r$ is the total number of respondents,
-- $w_i$ is the weight for unit $i$.
-
-The formula for the weight $w_i$ is:
+where $s^2_{jR}$ is the variance of sampled and responding units in class $j$. Here we assume 
 $$
-w_i = r(\hat{\phi}_i)^{-1} \Bigg/ \sum_{k=1}^{r} (\hat{\phi}_k)^{-1}, \quad \text{where } \hat{\phi}_i = \frac{r_j}{n_j} \text{ for units } i \text{ in class } j.
+\frac{n}{N} \approx  0, \quad \text{and} \quad \frac{N - n}{N - 1} \approx 1
 $$
-where $\hat{\phi}_i$ is the estimated response probability for unit $i$. $r_j$ is the number of respondents in class $j$ and $n_j$ is the total sample size in class $j$.
-
-
-So the variance of the weighted mean cholesterol level is:
+Substituting the given values:
 $$
 \begin{align*}
-\operatorname{Var}(\bar{y}_{\text{wc}}) &=  \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right) = \frac{r_1\times (\frac{n_1}{r_1})^2\times s_1^2 + r_2\times (\frac{n_2}{r_2})^2\times s_2^2 + r_3\times (\frac{n_3}{r_3})^2\times s_3^2 + r_4\times (\frac{n_4}{r_4})^2\times s_4^2}{(r_1\times\frac{n_1}{r_1}+ r_2\times\frac{n_2}{r_2}+ r_3\times\frac{n_3}{r_3}+ r_4\times\frac{n_4}{r_4})^2} \\
-& = \frac{22\times (\frac{25}{22})^2\times 30^2 + 27\times (\frac{35}{27})^2\times 35^2 + 16\times (\frac{28}{16})^2\times 44^2 + 5\times (\frac{12}{5})^2\times 41^2}{(22\times\frac{25}{22}+27\times\frac{35}{27}+16\times\frac{28}{16}+5\times\frac{12}{5})^2} \\
-& = 22.44
+\text{mse}(\hat{\bar{y}}_{\text{wc}}) &= \left( \frac{25}{100} \right)^2  \frac{30^2}{22} +
+\left( \frac{35}{100} \right)^2  \frac{35^2}{27} + \left( \frac{28}{100} \right)^2  \frac{44^2}{16} + \left( \frac{12}{100} \right)^2  \frac{41^2}{5} \\
+&+ \frac{1}{100^2} \left[ 25 \times (220 - 236.15)^2 + 35 \times (225 - 236.15)^2 + 28 \times (250 - 236.15)^2 + 12 \times (270 - 236.15)^2 \right]\\
+&=25.44
 \end{align*}
 $$
-The standard error estimate is:
-$$
-\text{SE}(\bar{y}_{\text{wc}}) = \sqrt{22.44} \approx 4.74
-$$
-Thus, the standard error is approximately **4.74**.
 
 The $95\%$ confidence interval for the weighted mean cholesterol level is:
 $$
-236.15 \pm 1.96 \times 4.74 = 236.15 \pm 9.29 = [226.86, 245.44]
+236.15 \pm 1.96 \times \sqrt{25.44} = 236.15 \pm 9.89 = (226.26, 246.04)
 $$
-This interval **can** be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents. The assumptions made about the nonresponse mechanism in this analysis are:
+This interval **can** be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents. 
 
-- The nonresponse mechanism is **ignorable**.
-- The nonresponse mechanism is **missing at random**.
-- Four classes have the **same** probability for a unit selected from a given class to respond.
+It has Quasirandomization assumption (Respondents in weighting class $j$ are a random sample of the sampled units, i.e. the data are MCAR within adjustment class j).
 
 
 

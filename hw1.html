@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ziheng Zhang_606300061">
-<meta name="dcterms.date" content="2025-01-29">
+<meta name="dcterms.date" content="2025-02-06">
 
 <title>Biostat M232 Homework 1</title>
 <style>
@@ -3078,7 +3078,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 29, 2025</p>
+      <p class="date">February 6, 2025</p>
     </div>
   </div>
   
@@ -3104,7 +3104,7 @@ vertical-align: -.125em;
 <li><span class="math inline">\(s^2\)</span> is the sample variance,</li>
 <li><span class="math inline">\(N\)</span> is the population size.</li>
 </ul>
-<p>However, due to random nonresponse, only <span class="math inline">\(n_1\)</span> of the <span class="math inline">\(n\)</span> sampled values are actually observed, resulting in a new sample mean <span class="math inline">\(\bar{y}_1\)</span> and sample variance <span class="math inline">\(s_1^2\)</span>. In this case, the variance of the estimator is:</p>
+<p>However, due to random nonresponse, only <span class="math inline">\(n_1\)</span> of the <span class="math inline">\(n\)</span> sampled values are actually observed, resulting in a new sample mean <span class="math inline">\(\bar{y}_1\)</span> and sample variance <span class="math inline">\(s_1^2\)</span>. In this case, the variance of the estimator with complete data is:</p>
 <p><span class="math display">\[
 \operatorname{Var}(\bar{y}_1 - \bar{Y}) = s_1^2 \left( \frac{1}{n_1} - \frac{1}{N} \right)
 \]</span></p>
@@ -3121,30 +3121,19 @@ s_{\text{new}}^2 = s_1^2 \cdot \frac{n_1 - 1}{n - 1}
 \]</span> So the ratio of the imputed variance to the complete data variance is: <span class="math display">\[
 \frac{\text{Imputed Variance}}{\text{Complete Data Variance}}
 = \frac{s_1^2 \left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}}
-{s^2 \left( \frac{1}{n} - \frac{1}{N} \right)}
+{s^2 \left( \frac{1}{n_1} - \frac{1}{N} \right)}
 \]</span> Assuming <span class="math inline">\(s_1^2 \approx s^2\)</span> (the observed sample is random), the ratio simplifies to:</p>
 <p><span class="math display">\[
-\frac{n_1 - 1}{n - 1}
-\]</span></p>
-<p>When <span class="math inline">\(n_1\)</span> is large, the ratio can be approximated as:</p>
-<p><span class="math display">\[
+\sqrt{\frac{\left( \frac{1}{n} - \frac{1}{N} \right) \cdot \frac{n_1 - 1}{n - 1}}
+{\left( \frac{1}{n_1} - \frac{1}{N} \right)}} \approx \frac{n_1}{n}
+\]</span> when <span class="math inline">\(n_1\)</span> and <span class="math inline">\(\frac{N}{n_1}\)</span> are large.</p>
+<p>Thus, the resulting interval estimate of <span class="math inline">\(\bar{Y}\)</span> will be too short by a factor approximately equal to <span class="math display">\[
 \frac{n_1}{n}
-\]</span> Thus, the resulting interval estimate of <span class="math inline">\(\bar{Y}\)</span> will be too short by a factor approximately equal to <span class="math display">\[
-\sqrt{\frac{n_1}{n}}
 \]</span></p>
 <ul>
-<li><p>If <span class="math inline">\(80\%\)</span> of the data is observed (<span class="math inline">\(n_1 = 0.8n\)</span>), the interval width would be reduced by: <span class="math display">\[
-\sqrt{\frac{0.8n}{n}} = \sqrt{0.8} \approx 0.894
-\]</span> This implies the interval will be approximately <strong>10.6% narrower</strong> than it would have been with complete data.</p></li>
-<li><p>If only 50% of the data is observed (<span class="math inline">\(n_1 = 0.5n\)</span>):</p>
-<p><span class="math display">\[
-\sqrt{\frac{0.5n}{n}} = \sqrt{0.5} \approx 0.707
-\]</span></p>
-<p>The interval will be approximately <strong>29.3% narrower</strong>.</p></li>
-<li><p>If just 30% of the data is observed (<span class="math inline">\(n_1 = 0.3n\)</span>):</p>
-<p><span class="math display">\[
-\sqrt{\frac{0.3n}{n}} = \sqrt{0.3} \approx 0.548
-\]</span> The interval width is <strong>45.2% narrower</strong>.</p></li>
+<li>If <span class="math inline">\(80\%\)</span> of the data is observed (<span class="math inline">\(n_1 = 0.8n\)</span>), the interval width would be reduced by: <span class="math display">\[
+\frac{0.8n}{n} = 0.8
+\]</span></li>
 </ul>
 </section>
 <section id="question-2" class="level2">
@@ -3183,31 +3172,29 @@ E(\hat{\beta}_0) = \beta_0
 &amp;= \frac{16265}{70} \approx 232.36
 \end{align*}
 \]</span> Thus, the estimated mean cholesterol level for respondents is <strong>232.36</strong>.</p>
-<p>The standard error is calculated using: <span class="math display">\[
-\operatorname{Var}(\bar{y}) = \frac{1}{\sum n_{i,resp}}\frac{\sum (n_{i,resp}-1) s_i^2}{\sum (n_{i,resp}-1)}
-\]</span> Substituting the values: <span class="math display">\[
+<p>The sample variance is calculated using: <span class="math display">\[
 \begin{align*}
-\sum (n_{i,resp}-1) s_i^2 &amp;= (21 \times 30^2) + (26 \times 35^2) + (15 \times 44^2) + (4 \times 41^2)\\
-&amp;= 18900 + 31850 + 29040 + 6724 = 86514\\
-\operatorname{Var}(\bar{y}) &amp;= \frac{1}{70} \times \frac{86514}{70 - 4}\\
-&amp;= \frac{86514}{66 \times 70} \approx 18.73\\
-\text{SE}(\bar{y}) &amp;= \sqrt{18.73} \approx 4.33
+s^2 &amp;= \frac{\sum_{i=1}^{I} \sum_{j=1}^{n_{i,resp}} (y_{ij} - \bar{y})^2}{N-1} = \frac{\sum_{i=1}^{I} \sum_{j=1}^{J} (y_{ij} - \bar{y}_i)^2 + \sum_{i=1}^{I} n_{i,resp} (\bar{y}_i - \bar{y})^2}{N-1}\\
+&amp;= \frac{1}{N-1}\left[\sum_{i=1}^{4} (n_{i,resp}-1) s_i^2 + n_{i,resp} (\bar{y}_i - \bar{y})^2 \right]\\
+&amp;= \frac{103400}{70-1}\\
+&amp;= 1498.551
 \end{align*}
-\]</span> Thus, the standard error is <strong>4.33</strong>.</p>
+\]</span> So the estimated variance of mean cholesterol level for respondents is <span class="math display">\[\operatorname{Var}(\bar{y}) = \frac{s^2}{70} = \frac{1498.551}{70} \approx 21.41\]</span></p>
+<p>Thus, the standard error is <strong>4.63</strong>.</p>
 <p>So the <span class="math inline">\(95\%\)</span> confidence interval for the mean cholesterol level of respondents is: <span class="math display">\[
-232.36 \pm 1.96 \times 4.33 = 232.36 \pm 8.48 = [223.87, 240.85]
+232.36 \pm 1.96 \times 4.63 = 232.36 \pm 9.07 = (223.29, 241.43)
 \]</span> This interval <strong>cannot</strong> be applied to the entire county population because of <strong>nonresponse bias</strong>, which may introduce systematic differences between respondents and nonrespondents.</p>
 </section>
 <section id="question-4" class="level2">
 <h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
 <p><strong>Answer:</strong></p>
 <p>The formula for the weighting class estimate of the mean cholesterol level from Equation (3.6) is: <span class="math display">\[
-\bar{y}_{\text{wc}} = n^{-1} \sum_{j=1}^{J} n_j \bar{y}_{jR}
+\bar{y}_{\text{wc}} = \frac{1}{n} \sum_{j=1}^{J} n_j \bar{y}_{jR}
 \]</span> Where:</p>
 <ul>
-<li>( n_j ) is the sample size for each age group,</li>
-<li>( {y}_{jR} ) is the respondent mean for each age group,</li>
-<li>( n ) is the total sample size.</li>
+<li><span class="math inline">\(n_j\)</span> is the sample size for each age group,</li>
+<li><span class="math inline">\(\bar{y}_{jR}\)</span> is the respondent mean for each age group,</li>
+<li><span class="math inline">\(n\)</span> is the total sample size.</li>
 </ul>
 <p>Substituting the given values: <span class="math display">\[
 \begin{align*}
@@ -3216,29 +3203,26 @@ E(\hat{\beta}_0) = \beta_0
 &amp;= \frac{23615}{100} = 236.15
 \end{align*}
 \]</span> Thus, the weighted mean cholesterol level for the population is <strong>236.15</strong>.</p>
-<p>The formula to the variance from Equation (3.7) is: <span class="math display">\[
-\operatorname{Var}(\bar{y}_{\text{wc}}) = \operatorname{Var} \left( \frac{1}{r} \sum_{i=1}^{r} w_i y_i \right) \approx \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right)
-\]</span> where - <span class="math inline">\(r\)</span> is the total number of respondents, - <span class="math inline">\(w_i\)</span> is the weight for unit <span class="math inline">\(i\)</span>.</p>
-<p>The formula for the weight <span class="math inline">\(w_i\)</span> is: <span class="math display">\[
-w_i = r(\hat{\phi}_i)^{-1} \Bigg/ \sum_{k=1}^{r} (\hat{\phi}_k)^{-1}, \quad \text{where } \hat{\phi}_i = \frac{r_j}{n_j} \text{ for units } i \text{ in class } j.
-\]</span> where <span class="math inline">\(\hat{\phi}_i\)</span> is the estimated response probability for unit <span class="math inline">\(i\)</span>. <span class="math inline">\(r_j\)</span> is the number of respondents in class <span class="math inline">\(j\)</span> and <span class="math inline">\(n_j\)</span> is the total sample size in class <span class="math inline">\(j\)</span>.</p>
-<p>So the variance of the weighted mean cholesterol level is: <span class="math display">\[
+<p>The formula to the estimated mean squared error from Equation (3.8) is: <span class="math display">\[
+\text{mse}(\hat{\bar{y}}_{\text{wc}}) =
+\sum_{j=1}^{J} \left( \frac{n_j}{n} \right)^2
+\left( 1 - \frac{r_j n}{n_j N} \right) \frac{s^2_{jR}}{r_j}
++ \frac{N - n}{(N - 1) n^2}
+\sum_{j=1}^{J} n_j (\bar{y}_{jR} - \bar{y}_{\text{wc}})^2
+\]</span> where <span class="math inline">\(s^2_{jR}\)</span> is the variance of sampled and responding units in class <span class="math inline">\(j\)</span>. Here we assume <span class="math display">\[
+\frac{n}{N} \approx  0, \quad \text{and} \quad \frac{N - n}{N - 1} \approx 1
+\]</span> Substituting the given values: <span class="math display">\[
 \begin{align*}
-\operatorname{Var}(\bar{y}_{\text{wc}}) &amp;=  \frac{\sigma^2}{r^2} \left( \sum_{i=1}^{r} w_i^2 \right) = \frac{r_1\times (\frac{n_1}{r_1})^2\times s_1^2 + r_2\times (\frac{n_2}{r_2})^2\times s_2^2 + r_3\times (\frac{n_3}{r_3})^2\times s_3^2 + r_4\times (\frac{n_4}{r_4})^2\times s_4^2}{(r_1\times\frac{n_1}{r_1}+ r_2\times\frac{n_2}{r_2}+ r_3\times\frac{n_3}{r_3}+ r_4\times\frac{n_4}{r_4})^2} \\
-&amp; = \frac{22\times (\frac{25}{22})^2\times 30^2 + 27\times (\frac{35}{27})^2\times 35^2 + 16\times (\frac{28}{16})^2\times 44^2 + 5\times (\frac{12}{5})^2\times 41^2}{(22\times\frac{25}{22}+27\times\frac{35}{27}+16\times\frac{28}{16}+5\times\frac{12}{5})^2} \\
-&amp; = 22.44
+\text{mse}(\hat{\bar{y}}_{\text{wc}}) &amp;= \left( \frac{25}{100} \right)^2  \frac{30^2}{22} +
+\left( \frac{35}{100} \right)^2  \frac{35^2}{27} + \left( \frac{28}{100} \right)^2  \frac{44^2}{16} + \left( \frac{12}{100} \right)^2  \frac{41^2}{5} \\
+&amp;+ \frac{1}{100^2} \left[ 25 \times (220 - 236.15)^2 + 35 \times (225 - 236.15)^2 + 28 \times (250 - 236.15)^2 + 12 \times (270 - 236.15)^2 \right]\\
+&amp;=25.44
 \end{align*}
-\]</span> The standard error estimate is: <span class="math display">\[
-\text{SE}(\bar{y}_{\text{wc}}) = \sqrt{22.44} \approx 4.74
-\]</span> Thus, the standard error is approximately <strong>4.74</strong>.</p>
+\]</span></p>
 <p>The <span class="math inline">\(95\%\)</span> confidence interval for the weighted mean cholesterol level is: <span class="math display">\[
-236.15 \pm 1.96 \times 4.74 = 236.15 \pm 9.29 = [226.86, 245.44]
-\]</span> This interval <strong>can</strong> be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents. The assumptions made about the nonresponse mechanism in this analysis are:</p>
-<ul>
-<li>The nonresponse mechanism is <strong>ignorable</strong>.</li>
-<li>The nonresponse mechanism is <strong>missing at random</strong>.</li>
-<li>Four classes have the <strong>same</strong> probability for a unit selected from a given class to respond.</li>
-</ul>
+236.15 \pm 1.96 \times \sqrt{25.44} = 236.15 \pm 9.89 = (226.26, 246.04)
+\]</span> This interval <strong>can</strong> be applied to the entire county population because the weights are used to adjust for nonresponse bias. Compared to the results in Question 3, the weighted mean cholesterol level is higher, and the confidence interval is wider. This is because the weights are used to adjust for nonresponse bias, which may introduce systematic differences between respondents and nonrespondents.</p>
+<p>It has Quasirandomization assumption (Respondents in weighting class <span class="math inline">\(j\)</span> are a random sample of the sampled units, i.e. the data are MCAR within adjustment class j).</p>
 </section>
 <section id="question-5" class="level2">
 <h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
@@ -3347,15 +3331,21 @@ r^*_{jk} = \frac{s^{(jk)}_{jk}}{\sqrt{s^{(j)}_{jj} s^{(k)}_{kk}}}
 \hat{\Delta}_{AC} = \bar{X}_1^{(n)} - \bar{X}_2^{(m)}
 \]</span> <!-- where: --> <!-- - \( \bar{X}_1^{(n)} \) is the sample mean of all \( n \) observations on \( X_1 \). --> <!-- - \( \bar{X}_2^{(m)} \) is the sample mean of the \( m \) observed \( X_2 \) values. --></p>
 <p>Since <span class="math inline">\(X_1\)</span> is based on <span class="math inline">\(n\)</span> cases and <span class="math inline">\(X_2\)</span> on <span class="math inline">\(m\)</span> cases, the variance is: <span class="math display">\[
-\text{Var}(\hat{\Delta}_{AC}) = \frac{\sigma^2}{n} + \frac{\sigma^2}{m}
+\begin{align*}
+\text{Var}(\hat{\Delta}_{AC}) &amp;= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i} - \frac{1}{m}\Sigma_{i=1}^{m}X_{2i} + \frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&amp;= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i} - \frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) + \text{Var}(\frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&amp;= \text{Var}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i}) + \text{Var}(\frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) - 2\text{Cov}(\frac{1}{n}\Sigma_{i=1}^{m}X_{1i}, \frac{1}{m}\Sigma_{i=1}^{m}X_{2i}) + \text{Var}(\frac{1}{n}\Sigma_{i=m+1}^{n}X_{1i})\\
+&amp;= \frac{m\sigma^2}{n^2} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n} + \frac{(n-m)\sigma^2}{n^2}\\
+&amp;= \frac{\sigma^2}{n} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n}
+\end{align*}
 \]</span></p>
 <p>For the variance of AC to be less than that of CC, we need: <span class="math display">\[
 \begin{align*}
-&amp;\frac{\sigma^2}{n} + \frac{\sigma^2}{m} &lt; \frac{2\sigma^2(1 - \rho)}{m}\\
-&amp;\Rightarrow \frac{1}{n} + \frac{1}{m} &lt; \frac{2(1 - \rho)}{m}\\
-&amp;\Rightarrow \frac{1}{n} &lt; \frac{2(1 - \rho)}{m} - \frac{1}{m}\\
-&amp;\Rightarrow \frac{1}{n} &lt; \frac{1 - 2\rho}{m}\\
-&amp;\Rightarrow n &gt; \frac{m}{1 - 2\rho} \quad (\rho &lt; 0.5)
+\text{Var}(\hat{\Delta}_{AC}) - \text{Var}(\hat{\Delta}_{CC}) &amp;= \frac{\sigma^2}{n} + \frac{\sigma^2}{m} - 2\frac{\rho \sigma^2}{n} - \frac{2\sigma^2(1-\rho)}{m} &lt; 0\\
+&amp;= \frac{(1-2\rho)\sigma^2}{n} - \frac{(1-2\rho)\sigma^2}{m} &lt; 0\\
+&amp;= \frac{(1-2\rho)(m-n)\sigma^2}{nm} &lt; 0\\
+\Rightarrow (1-2\rho) &amp;&gt; 0, \text{ since } (m-n) &lt; 0\\
+\Rightarrow \rho &amp;&lt; 0.5
 \end{align*}
 \]</span> So when the correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is less than 0.5, the variance of the AC estimator is less than that of the CC estimator.</p>
 </section>
