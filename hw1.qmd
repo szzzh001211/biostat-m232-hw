@@ -82,7 +82,7 @@ $$
 \frac{n_1}{n}
 $$
 
-- If $80\%$ of the data is observed ($n_1 = 0.8n$), the interval width would be reduced by:
+- If $80\%$ of the data is observed ($n_1 = 0.8n$), the interval width would be reduced by a factor:
 $$
 \frac{0.8n}{n} = 0.8
 $$
@@ -258,7 +258,7 @@ Thus, the standard error is **4.81**.
 
 The $95\%$ confidence interval for the post-stratified mean cholesterol level is:
 $$
-236 \pm 1.96 \times 4.81 = 236 \pm 9.42 = [226.57, 245.43]
+236 \pm 1.96 \times 4.81 = 236 \pm 9.42 = (226.57, 245.43)
 $$
 
 
