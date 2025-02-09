@@ -1,0 +1,232 @@
+---
+title: "Biostat M232 Homework 2"
+subtitle: Due Feb 28 @ 11:59PM
+author: "Ziheng Zhang_606300061"
+date: today
+format:
+  html:
+    theme: cosmo
+    embed-resources: true
+    number-sections: false
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    code-fold: false
+knitr:
+  opts_chunk: 
+    cache: false    
+    echo: true
+    fig.align: 'center'
+    fig.width: 6
+    fig.height: 4
+    message: FALSE
+execute:
+  eval: true    
+---
+
+## Question 1
+
+**Answer:**
+
+### Likelihood function
+Suppose we have a random sample $X_1, X_2, \dots, X_n$ from a Poisson distribution with parameter $\lambda$, i.e.,
+$$
+X_i \sim \text{Poisson}(\lambda), \quad i = 1,2,\dots,n.
+$$
+
+The probability mass function (PMF) of a Poisson-distributed variable is:
+$$
+P(X_i = x_i | \lambda) = \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}, \quad x_i = 0,1,2, \dots
+$$
+Thus, the likelihood function for a sample of size $n$ is:
+$$
+L(\lambda) = \prod_{i=1}^{n} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}
+$$
+So the log-likelihood function is:
+$$
+\ell(\lambda) = \sum_{i=1}^{n} \left[ x_i \log \lambda - \lambda - \log(x_i!) \right]
+$$
+
+
+### Score function
+The score function is the derivative of the log-likelihood function with respect to $\lambda$:
+$$
+\begin{aligned}
+\frac{\partial \ell(\lambda)}{\partial \lambda} &= \sum_{i=1}^{n} \left[ \frac{x_i}{\lambda} - 1 \right]\\
+& = \frac{1}{\lambda} \sum_{i=1}^{n} x_i - n
+\end{aligned}
+$$
+
+### MLE
+To find the MLE of $\lambda$, we set the score function to zero:
+$$
+\frac{1}{\lambda} \sum_{i=1}^{n} x_i - n = 0
+$$
+Solving for $\lambda$, we get:
+$$
+\hat{\lambda} = \frac{1}{n} \sum_{i=1}^{n} x_i = \bar{X}
+$$
+### Observed Information
+The observed information is the negative of the second derivative of the log-likelihood function with respect to $\lambda$:
+$$
+I_0(\lambda) = -\frac{\partial^2 \ell(\lambda)}{\partial \lambda^2} = \frac{1}{\lambda^2} \sum_{i=1}^{n} x_i
+$$
+Thus, the estimate of the observed information is:
+$$
+I_0(\hat{\lambda}) = \frac{1}{\hat{\lambda}^2} \sum_{i=1}^{n} x_i = \frac{n}{\bar{X}}
+$$
+### Expected Information
+
+The expected information is the expectation of the observed information:
+$$
+I(\lambda) = E(I_0(\lambda)) = \frac{1}{\lambda^2} E\left(\sum_{i=1}^{n} x_i\right) = \frac{nE(X)}{\lambda^2} = \frac{n\lambda}{\lambda^2} = \frac{n}{\lambda}
+$$
+Thus, the estimate of the expected information is:
+$$
+I(\hat{\lambda}) = \frac{n}{\hat{\lambda}} = \frac{n}{\bar{X}}
+$$
+
+
+## Question 2
+
+**Answer:**
+
+Suppose $X_1, X_2, \dots, X_n$ are independent and identically distributed (i.i.d.) from a normal distribution:
+$$
+X_i \sim \mathcal{N}(\mu, \sigma^2)
+$$
+The likelihood function for the normal distribution is:
+$$
+L(\mu, \sigma^2) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(X_i - \mu)^2}{2\sigma^2}\right)
+$$
+So the log-likelihood function is:
+$$
+\ell(\mu, \sigma^2) = -\frac{n}{2} \log(2\pi) - \frac{n}{2} \log(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (X_i - \mu)^2
+$$
+So taking the derivative of the log-likelihood function with respect to $\mu$ and $\sigma^2$, we get the score function:
+$$
+\begin{aligned}
+\frac{\partial \ell(\mu, \sigma^2)}{\partial \mu} &= \frac{1}{\sigma^2} \sum_{i=1}^{n} (X_i - \mu)\\
+\frac{\partial \ell(\mu, \sigma^2)}{\partial \sigma^2} &= -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^{n} (X_i - \mu)^2
+\end{aligned}
+$$
+We set the score function to zero to find the MLE of $\mu$ and $\sigma^2$:
+$$
+\begin{aligned}
+\frac{1}{\sigma^2} \sum_{i=1}^{n} (X_i - \mu) &= 0\\
+\sum_{i=1}^{n} (X_i - \mu) &= 0\\
+\sum_{i=1}^{n} X_i - n\mu &= 0\\
+\hat{\mu} = \frac{1}{n} \sum_{i=1}^{n} X_i &= \bar{X}
+\end{aligned}
+$$
+$$
+\begin{aligned}
+-\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^{n} (X_i - \mu)^2 &= 0\\
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^{n} (X_i - \mu)^2 &= \frac{1}{n} \sum_{i=1}^{n} (X_i - \bar{X})^2
+\end{aligned}
+$$
+So the MLE of the coefficient of variation, $\frac{\sigma}{\mu}$, is:
+$$
+\frac{\hat{\sigma}}{\hat{\mu}} = \frac{\sqrt{\frac{1}{n} \sum_{i=1}^{n} (X_i - \bar{X})^2}}{\bar{X}}
+$$
+
+## Question 3
+
+**Answer:**
+
+### (a)
+
+$m_{i2}$ depends only on $y_{i1}$, which is observed. Since it does **not** depend on $y_{i2}$ (the missing variable), the missing data mechanism is **MAR**. The missingness parameters $\psi$ are distinct from $\theta$, so the missingness mechanism is **ignorable**.
+
+
+### (b)
+
+$m_{i2}$ depends **directly** on $y_{i2}$, which is missing. This means the missing data mechanism is **not MAR** but **MNAR** (Missing Not at Random). Since the missingness depends on the missing values themselves, standard likelihood-based inference is **not ignorable**.
+
+
+### (c)
+
+The missingness depends on $y_{i1}$, which is observed. However, it also includes $\mu_1$, which is a parameter of the model $\theta$. Since $\mu_1$ is involved in the missingness mechanism, **$\psi$ is not distinct from $\theta$**. Even though the missingness is **MAR**, the missingness mechanism is **not ignorable** because it depends on $\theta$.
+
+## Question 4
+
+**Answer:**
+
+Since $y_{i1}$ and $y_{i2}$ are jointly normal, the conditional distribution of $y_{i2}$ given $y_{i1}$ follows:
+$$
+y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \rho (y_{i1} - x_{i1} \beta_1), 1 - \rho^2 \right).
+$$
+The probability of missingness is then:
+$$
+\Pr(y_{i2} > 0 | y_{i1}) = 1 - \Phi \left( \frac{-x_{i2} \beta_2 - (\rho / \sigma_1)(y_{i1} - x_{i1} \beta_1)}{\sqrt{1 - \rho^2}} \right).
+$$
+This confirms the given expression. 
+
+Next, we determine whether the missing data mechanism is **Missing at Random (MAR)** and whether it is **ignorable** for likelihood-based inference. The missingness probability depends on $y_{i1}$ (an observed variable) and $x_{i2}$ (also observed), but not directly on $y_{i2}$ (which is missing). Therefore, the missing data mechanism is **MAR**. However, since the missingness probability explicitly involves parameters $\beta_1, \beta_2$, and $\rho$, the missing data mechanism is **not ignorable** for likelihood inference, meaning that the likelihood function must account for the missingness model explicitly.
+
+Thus, the missing data mechanism in this problem is **MAR but not ignorable**, necessitating explicit modeling in likelihood-based inference.
+
+
+## Question 5
+
+**Answer:**
+
+Given observed data $Y_1, Y_2, \dots, Y_n$ and the latent indicator variables $Z_1, Z_2, \dots, Z_n$, the complete data likelihood is:
+$$
+L_c(\lambda, \mu_1, \mu_0, \sigma^2) = \prod_{i=1}^{n} \left[ \lambda f_1(y_i) \right]^{Z_i} \left[ (1-\lambda) f_0(y_i) \right]^{1-Z_i}
+$$
+Taking the log-likelihood:
+$$
+\log L_c = \sum_{i=1}^{n} Z_i \log \lambda + \sum_{i=1}^{n} (1 - Z_i) \log (1 - \lambda) + \sum_{i=1}^{n} Z_i \log f_1(y_i) + \sum_{i=1}^{n} (1 - Z_i) \log f_0(y_i)
+$$
+where
+$$
+f_j(y_i) = \frac{1}{\sigma \sqrt{2\pi}} \exp \left( -\frac{(y_i - \mu_j)^2}{2\sigma^2} \right), \quad j \in \{0,1\}
+$$
+$$
+\frac{d \log L_c}{d \lambda} = \frac{1}{\lambda} \sum_{i=1}^{n} Z_i - \frac{1}{1 - \lambda} \sum_{i=1}^{n} (1 - Z_i) = 0
+$$
+So the MLE of $\lambda$ is:
+$$
+\hat{\lambda} = \frac{1}{n} \sum_{i=1}^{n} Z_i
+$$
+$$
+\frac{d \log L_c}{d \mu_1} = \frac{1}{\sigma^2} \sum_{i=1}^{n} Z_i (y_i - \mu_1) = 0
+$$
+So the MLE of $\mu_1$ is:
+$$
+\hat{\mu}_1 = \frac{\sum_{i=1}^{n} Z_i y_i}{\sum_{i=1}^{n} Z_i}
+$$
+$$
+\frac{d \log L_c}{d \mu_0} = \frac{1}{\sigma^2} \sum_{i=1}^{n} (1 - Z_i) (y_i - \mu_0) = 0
+$$
+So the MLE of $\mu_0$ is:
+$$
+\hat{\mu}_0 = \frac{\sum_{i=1}^{n} (1 - Z_i) y_i}{\sum_{i=1}^{n} (1 - Z_i)}
+$$
+$$
+\frac{d \log L_c}{d \sigma^2} = -\frac{1}{2\sigma^2} \sum_{i=1}^{n} Z_i (y_i - \mu_1)^2 - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (1 - Z_i) (y_i - \mu_0)^2 + \frac{n}{2\sigma^2} = 0
+$$
+So the MLE of $\sigma^2$ is:
+$$
+\hat{\sigma}^2 = \frac{\sum_{i=1}^{n} Z_i (y_i - \hat{\mu}_1)^2 + \sum_{i=1}^{n} (1 - Z_i) (y_i - \hat{\mu}_0)^2}{n}
+$$
+Since $Z_i$ is unobserved, we compute its expectation given current parameter estimates $\hat{\lambda}, \hat{\mu}_1, \hat{\mu}_0, \hat{\sigma}^2$:
+$$
+\hat{z_i} = \hat{E}[Z_i | y_i] = \frac{\hat{\lambda} f_1(y_i; \hat{\mu_1}, \hat{\sigma}^2)}{\hat{\lambda} f_1(y_i; \hat{\mu_1}, \hat{\sigma}^2) + (1 - \hat{\lambda}) f_0(y_i; \hat{\mu_0}, \hat{\sigma}^2)}
+\tag{***}
+$$
+Using starting values $\hat{\lambda}^{(0)}, \hat{\mu}_1^{(0)}, \hat{\mu}_2^{(0)}, \hat{\sigma}^{2(0)}$, compute $\hat{z}_1^{(0)}, \dots, \hat{z}_n^{(0)}$ by $(***)$. Then update $\hat{\lambda}^{(1)}, \hat{\mu}_1^{(1)}, \hat{\mu}_2^{(1)}, \hat{\sigma}^{2(1)}$ using the formulas above. Once again, using $\hat{\lambda}^{(1)}, \hat{\mu}_1^{(1)}, \hat{\mu}_2^{(1)}, \hat{\sigma}^{2(1)}$, compute $\hat{z}_1^{(1)}, \dots, \hat{z}_n^{(1)}$ by $(***)$. Continue until convergence:
+$$
+\left| \hat{\lambda}^{(k)} - \hat{\lambda}^{(k+1)} \right| < \epsilon_{\lambda}, \quad
+\left| \hat{\mu}_i^{(k)} - \hat{\mu}_i^{(k+1)} \right| < \epsilon_i, \quad
+\left| \hat{\sigma}^{2(k)} - \hat{\sigma}^{2(k+1)} \right| < \epsilon_{\sigma},
+$$
+for predetermined tolerance levels $\epsilon_{\lambda}, \epsilon_1, \epsilon_2, \epsilon_{\sigma}$.
+
+
+
+
+
+
+
