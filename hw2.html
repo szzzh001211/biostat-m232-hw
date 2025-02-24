@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ziheng Zhang_606300061">
-<meta name="dcterms.date" content="2025-02-08">
+<meta name="dcterms.date" content="2025-02-24">
 
 <title>Biostat M232 Homework 2</title>
 <style>
@@ -3007,6 +3007,8 @@ vertical-align: -.125em;
   <li><a href="#likelihood-function" id="toc-likelihood-function" class="nav-link" data-scroll-target="#likelihood-function">Likelihood function</a></li>
   <li><a href="#score-function" id="toc-score-function" class="nav-link" data-scroll-target="#score-function">Score function</a></li>
   <li><a href="#mle" id="toc-mle" class="nav-link" data-scroll-target="#mle">MLE</a></li>
+  <li><a href="#observed-information" id="toc-observed-information" class="nav-link" data-scroll-target="#observed-information">Observed Information</a></li>
+  <li><a href="#expected-information" id="toc-expected-information" class="nav-link" data-scroll-target="#expected-information">Expected Information</a></li>
   </ul></li>
   <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a></li>
   <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3">Question 3</a>
@@ -3044,7 +3046,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 8, 2025</p>
+      <p class="date">February 24, 2025</p>
     </div>
   </div>
   
@@ -3085,11 +3087,18 @@ L(\lambda) = \prod_{i=1}^{n} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}
 \frac{1}{\lambda} \sum_{i=1}^{n} x_i - n = 0
 \]</span> Solving for <span class="math inline">\(\lambda\)</span>, we get: <span class="math display">\[
 \hat{\lambda} = \frac{1}{n} \sum_{i=1}^{n} x_i = \bar{X}
-\]</span> ### Observed Information The observed information is the negative of the second derivative of the log-likelihood function with respect to <span class="math inline">\(\lambda\)</span>: <span class="math display">\[
+\]</span></p>
+</section>
+<section id="observed-information" class="level3">
+<h3 class="anchored" data-anchor-id="observed-information">Observed Information</h3>
+<p>The observed information is the negative of the second derivative of the log-likelihood function with respect to <span class="math inline">\(\lambda\)</span>: <span class="math display">\[
 I_0(\lambda) = -\frac{\partial^2 \ell(\lambda)}{\partial \lambda^2} = \frac{1}{\lambda^2} \sum_{i=1}^{n} x_i
 \]</span> Thus, the estimate of the observed information is: <span class="math display">\[
 I_0(\hat{\lambda}) = \frac{1}{\hat{\lambda}^2} \sum_{i=1}^{n} x_i = \frac{n}{\bar{X}}
-\]</span> ### Expected Information</p>
+\]</span></p>
+</section>
+<section id="expected-information" class="level3">
+<h3 class="anchored" data-anchor-id="expected-information">Expected Information</h3>
 <p>The expected information is the expectation of the observed information: <span class="math display">\[
 I(\lambda) = E(I_0(\lambda)) = \frac{1}{\lambda^2} E\left(\sum_{i=1}^{n} x_i\right) = \frac{nE(X)}{\lambda^2} = \frac{n\lambda}{\lambda^2} = \frac{n}{\lambda}
 \]</span> Thus, the estimate of the expected information is: <span class="math display">\[
@@ -3146,13 +3155,34 @@ L(\mu, \sigma^2) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\fra
 <section id="question-4" class="level2">
 <h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
 <p><strong>Answer:</strong></p>
-<p>Since <span class="math inline">\(y_{i1}\)</span> and <span class="math inline">\(y_{i2}\)</span> are jointly normal, the conditional distribution of <span class="math inline">\(y_{i2}\)</span> given <span class="math inline">\(y_{i1}\)</span> follows: <span class="math display">\[
-y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \rho (y_{i1} - x_{i1} \beta_1), 1 - \rho^2 \right).
-\]</span> The probability of missingness is then: <span class="math display">\[
-\Pr(y_{i2} &gt; 0 | y_{i1}) = 1 - \Phi \left( \frac{-x_{i2} \beta_2 - (\rho / \sigma_1)(y_{i1} - x_{i1} \beta_1)}{\sqrt{1 - \rho^2}} \right).
+<p>Since <span class="math inline">\(y_{i1}\)</span> and <span class="math inline">\(y_{i2}\)</span> are bivariate normal: <span class="math display">\[
+\begin{bmatrix}
+y_{i1}\\
+y_{i2}
+\end{bmatrix} \sim \mathcal{N} \left( \begin{bmatrix}
+x_{i1} \beta_1\\
+x_{i2} \beta_2
+\end{bmatrix}, \begin{bmatrix}
+\sigma_1^2 &amp; \rho \sigma_1\\
+\rho \sigma_1 &amp; 1
+\end{bmatrix} \right)
+\]</span> Since the conditional distribution of <span class="math inline">\(y_{i2}\)</span> given <span class="math inline">\(y_{i1}\)</span> follows: <span class="math display">\[
+y_{i2} | y_{i1} \sim \mathcal{N} \left( \mu_2 + \frac{\Sigma_{21}}{\Sigma_{11}} (y_{i1} - \mu_1), \sigma_2^2 - \frac{\Sigma_{21}^2}{\Sigma_{11}} \right)
+\]</span> then the conditional distribution of <span class="math inline">\(y_{i2}\)</span> given <span class="math inline">\(y_{i1}\)</span> is: <span class="math display">\[
+y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \frac{\rho \sigma_1}{\sigma_1^2} (y_{i1} - x_{i1} \beta_1), 1 - \frac{\rho^2 \sigma_1^2}{\sigma_1^2} \right)\\
+\Rightarrow y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \frac{\rho}{\sigma_1} (y_{i1} - x_{i1} \beta_1), 1 - \rho^2 \right)
+\]</span></p>
+<p>The probability of missingness is then: <span class="math display">\[
+\begin{aligned}
+\Pr(m_{i1} = 1 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi) &amp;= \Pr(y_{i2} &gt; 0 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi)\\
+&amp;= 1- \Pr(y_{i2} \le 0 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi)\\
+&amp;= 1 - \Phi \left( \frac{-x_{i2} \beta_2 - (\rho / \sigma_1)(y_{i1} - x_{i1} \beta_1)}{\sqrt{1 - \rho^2}} \right)
+\end{aligned}
 \]</span> This confirms the given expression.</p>
-<p>Next, we determine whether the missing data mechanism is <strong>Missing at Random (MAR)</strong> and whether it is <strong>ignorable</strong> for likelihood-based inference. The missingness probability depends on <span class="math inline">\(y_{i1}\)</span> (an observed variable) and <span class="math inline">\(x_{i2}\)</span> (also observed), but not directly on <span class="math inline">\(y_{i2}\)</span> (which is missing). Therefore, the missing data mechanism is <strong>MAR</strong>. However, since the missingness probability explicitly involves parameters <span class="math inline">\(\beta_1, \beta_2\)</span>, and <span class="math inline">\(\rho\)</span>, the missing data mechanism is <strong>not ignorable</strong> for likelihood inference, meaning that the likelihood function must account for the missingness model explicitly.</p>
-<p>Thus, the missing data mechanism in this problem is <strong>MAR but not ignorable</strong>, necessitating explicit modeling in likelihood-based inference.</p>
+<p>Next, we determine whether the missing data mechanism is <strong>Missing at Random (MAR)</strong> and whether it is <strong>ignorable</strong> for likelihood-based inference.</p>
+<p><span class="math inline">\(m_{i1}\)</span> is missingness indicator for <span class="math inline">\(y_{i1}\)</span>, which depends on <span class="math inline">\(y_{i1}\)</span> and <span class="math inline">\(x_{i1}, x_{i2}\)</span> (observed). If we want the missing data mechanism to be <strong>MAR</strong>, then the missingness probability should not depend on <span class="math inline">\(y_{i1}\)</span> so <span class="math inline">\(\rho = 0\)</span>.</p>
+<p>Also, if we want the missing data mechanism to be <strong>ignorable</strong>, it should first be MAR and the missingness parameters <span class="math inline">\(\psi\)</span> should be distinct from the model parameters <span class="math inline">\(\theta\)</span> so <span class="math inline">\(\rho = 0\)</span>.</p>
+<p>So the missingness mechanism is <strong>MAR</strong> and <strong>ignorable</strong> if <span class="math inline">\(\rho = 0\)</span>.</p>
 </section>
 <section id="question-5" class="level2">
 <h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
@@ -3176,7 +3206,7 @@ f_j(y_i) = \frac{1}{\sigma \sqrt{2\pi}} \exp \left( -\frac{(y_i - \mu_j)^2}{2\si
 \]</span> So the MLE of <span class="math inline">\(\mu_0\)</span> is: <span class="math display">\[
 \hat{\mu}_0 = \frac{\sum_{i=1}^{n} (1 - Z_i) y_i}{\sum_{i=1}^{n} (1 - Z_i)}
 \]</span> <span class="math display">\[
-\frac{d \log L_c}{d \sigma^2} = -\frac{1}{2\sigma^2} \sum_{i=1}^{n} Z_i (y_i - \mu_1)^2 - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (1 - Z_i) (y_i - \mu_0)^2 + \frac{n}{2\sigma^2} = 0
+\frac{d \log L_c}{d \sigma^2} = \frac{1}{2\sigma^4} \sum_{i=1}^{n} Z_i (y_i - \mu_1)^2 + \frac{1}{2\sigma^4} \sum_{i=1}^{n} (1 - Z_i) (y_i - \mu_0)^2 - \frac{n}{2\sigma^2} = 0
 \]</span> So the MLE of <span class="math inline">\(\sigma^2\)</span> is: <span class="math display">\[
 \hat{\sigma}^2 = \frac{\sum_{i=1}^{n} Z_i (y_i - \hat{\mu}_1)^2 + \sum_{i=1}^{n} (1 - Z_i) (y_i - \hat{\mu}_0)^2}{n}
 \]</span> Since <span class="math inline">\(Z_i\)</span> is unobserved, we compute its expectation given current parameter estimates <span class="math inline">\(\hat{\lambda}, \hat{\mu}_1, \hat{\mu}_0, \hat{\sigma}^2\)</span>: <span class="math display">\[

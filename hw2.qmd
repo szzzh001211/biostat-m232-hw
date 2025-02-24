@@ -66,6 +66,7 @@ Solving for $\lambda$, we get:
 $$
 \hat{\lambda} = \frac{1}{n} \sum_{i=1}^{n} x_i = \bar{X}
 $$
+
 ### Observed Information
 The observed information is the negative of the second derivative of the log-likelihood function with respect to $\lambda$:
 $$
@@ -75,6 +76,7 @@ Thus, the estimate of the observed information is:
 $$
 I_0(\hat{\lambda}) = \frac{1}{\hat{\lambda}^2} \sum_{i=1}^{n} x_i = \frac{n}{\bar{X}}
 $$
+
 ### Expected Information
 
 The expected information is the expectation of the observed information:
@@ -152,19 +154,46 @@ The missingness depends on $y_{i1}$, which is observed. However, it also include
 
 **Answer:**
 
-Since $y_{i1}$ and $y_{i2}$ are jointly normal, the conditional distribution of $y_{i2}$ given $y_{i1}$ follows:
+Since $y_{i1}$ and $y_{i2}$ are bivariate normal:
 $$
-y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \rho (y_{i1} - x_{i1} \beta_1), 1 - \rho^2 \right).
+\begin{bmatrix}
+y_{i1}\\
+y_{i2}
+\end{bmatrix} \sim \mathcal{N} \left( \begin{bmatrix}
+x_{i1} \beta_1\\
+x_{i2} \beta_2
+\end{bmatrix}, \begin{bmatrix}
+\sigma_1^2 & \rho \sigma_1\\
+\rho \sigma_1 & 1
+\end{bmatrix} \right)
 $$
+Since the conditional distribution of $y_{i2}$ given $y_{i1}$ follows:
+$$
+y_{i2} | y_{i1} \sim \mathcal{N} \left( \mu_2 + \frac{\Sigma_{21}}{\Sigma_{11}} (y_{i1} - \mu_1), \sigma_2^2 - \frac{\Sigma_{21}^2}{\Sigma_{11}} \right)
+$$
+then the conditional distribution of $y_{i2}$ given $y_{i1}$ is:
+$$
+y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \frac{\rho \sigma_1}{\sigma_1^2} (y_{i1} - x_{i1} \beta_1), 1 - \frac{\rho^2 \sigma_1^2}{\sigma_1^2} \right)\\
+\Rightarrow y_{i2} | y_{i1} \sim \mathcal{N} \left( x_{i2} \beta_2 + \frac{\rho}{\sigma_1} (y_{i1} - x_{i1} \beta_1), 1 - \rho^2 \right)
+$$
+
 The probability of missingness is then:
 $$
-\Pr(y_{i2} > 0 | y_{i1}) = 1 - \Phi \left( \frac{-x_{i2} \beta_2 - (\rho / \sigma_1)(y_{i1} - x_{i1} \beta_1)}{\sqrt{1 - \rho^2}} \right).
+\begin{aligned}
+\Pr(m_{i1} = 1 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi) &= \Pr(y_{i2} > 0 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi)\\
+&= 1- \Pr(y_{i2} \le 0 \mid y_{i1}, x_{i1}, x_{i2}, \theta, \psi)\\
+&= 1 - \Phi \left( \frac{-x_{i2} \beta_2 - (\rho / \sigma_1)(y_{i1} - x_{i1} \beta_1)}{\sqrt{1 - \rho^2}} \right)
+\end{aligned}
 $$
 This confirms the given expression. 
 
-Next, we determine whether the missing data mechanism is **Missing at Random (MAR)** and whether it is **ignorable** for likelihood-based inference. The missingness probability depends on $y_{i1}$ (an observed variable) and $x_{i2}$ (also observed), but not directly on $y_{i2}$ (which is missing). Therefore, the missing data mechanism is **MAR**. However, since the missingness probability explicitly involves parameters $\beta_1, \beta_2$, and $\rho$, the missing data mechanism is **not ignorable** for likelihood inference, meaning that the likelihood function must account for the missingness model explicitly.
+Next, we determine whether the missing data mechanism is **Missing at Random (MAR)** and whether it is **ignorable** for likelihood-based inference. 
 
-Thus, the missing data mechanism in this problem is **MAR but not ignorable**, necessitating explicit modeling in likelihood-based inference.
+$m_{i1}$ is missingness indicator for $y_{i1}$, which depends on $y_{i1}$ and $x_{i1}, x_{i2}$ (observed). If we want the missing data mechanism to be **MAR**, then the missingness probability should not depend on $y_{i1}$ so $\rho = 0$.
+
+Also, if we want the missing data mechanism to be **ignorable**, it should first be MAR and the missingness parameters $\psi$ should be distinct from the model parameters $\theta$ so $\rho = 0$. 
+
+So the missingness mechanism is **MAR** and **ignorable** if $\rho = 0$.
 
 
 ## Question 5
