@@ -1,0 +1,108 @@
+---
+title: "Biostat M232 Final Project"
+subtitle: Due Mar 21 @ 11:59PM
+author: "Ziheng Zhang_606300061"
+date: today
+format:
+  html:
+    theme: cosmo
+    embed-resources: true
+    number-sections: false
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    code-fold: false
+knitr:
+  opts_chunk: 
+    cache: false    
+    echo: true
+    fig.align: 'center'
+    fig.width: 6
+    fig.height: 4
+    message: FALSE
+execute:
+  eval: true    
+---
+
+## Basic Setup
+```{r}
+library(tidyverse)
+library(naniar)
+library(visdat)
+library(ggplot2)
+library(mice)
+set.seed(5)
+
+```
+
+## Data Preparation
+```{r}
+lead <- read.table("lead.txt")
+lead[lead == -9] <- NA
+col_names <- c("id", "smeltdis", "age_mo", "female", "iqf", "lead72", "lead73", 
+               "fst2yrs", "totyrs", "pica", "colic", "clumsy", "irrit", 
+               "convulse", "fwtap", "tap", "visreact", "audreact", "hypscore")
+colnames(lead) <- col_names
+
+lead$female <- factor(lead$female, levels = c(0,1), labels = c("Male", "Female"))
+lead$fst2yrs <- factor(lead$fst2yrs, levels = c(0,1), labels = c("No", "Yes"))
+lead$pica <- factor(lead$pica, levels = c(0,1), labels = c("No", "Yes"))
+lead$colic <- factor(lead$colic, levels = c(0,1), labels = c("No", "Yes"))
+lead$clumsy <- factor(lead$clumsy, levels = c(0,1), labels = c("No", "Yes"))
+lead$irrit <- factor(lead$irrit, levels = c(0,1), labels = c("No", "Yes"))
+lead$convulse <- factor(lead$convulse, levels = c(0,1), labels = c("No", "Yes"))
+lead$hypscore <- factor(lead$hypscore, levels = c(0,1,2,3,4), 
+                        labels = c("Never", "Seldom", "Sometimes", "Often", 
+                                   "Always"), ordered = TRUE)
+
+
+lead$smeltdis <- factor(lead$smeltdis, levels = c(1,2,3), 
+                        labels = c("0-1 miles", "1-2.5 miles", "2.5-4.1 miles"), 
+                        ordered = TRUE)
+```
+
+
+## Missing Data Exploration
+```{r}
+p <- vis_miss(lead) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 0.5, size = 12),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18))
+plot(p)
+# ggsave("missing_data_plot.png", 
+#        p, 
+#        width = 12, 
+#        height = 9, 
+#        dpi = 300,
+#        bg = "white")
+
+miss_var_summary(lead)
+```
+
+
+
+## Task 1
+
+```{r}
+
+
+```
+
+
+
+## Task 2 -- Mice Imputation
+
+```{r}
+
+lead_mice <- mice(lead, m = 5)
+lead_mice$imp
+
+```
+
+
+
+
+
