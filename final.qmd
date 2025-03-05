@@ -31,6 +31,7 @@ library(naniar)
 library(visdat)
 library(ggplot2)
 library(mice)
+library(gridExtra)
 set.seed(5)
 
 ```
@@ -98,11 +99,143 @@ miss_var_summary(lead)
 ```{r}
 
 lead_mice <- mice(lead, m = 5)
-lead_mice$imp
+lead1 <- complete(lead_mice, 1)
+lead2 <- complete(lead_mice, 2)
+lead3 <- complete(lead_mice, 3)
+lead4 <- complete(lead_mice, 4)
+lead5 <- complete(lead_mice, 5)
+```
 
+```{r}
+plts <- list()
+
+plts[[1]] <- ggplot(data = lead, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Original data") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[2]] <- ggplot(data = lead1, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "First imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[3]] <- ggplot(data = lead2, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Second imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[4]] <- ggplot(data = lead3, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Third imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[5]] <- ggplot(data = lead4, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Fourth imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[6]] <- ggplot(data = lead5, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Fifth imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+  
+ggsave("imputation_histograms.png", 
+       grid.arrange(grobs = plts, nrow = 2), 
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 ```
 
 
+```{r}
+lead_complete <- complete(lead_mice)
+
+lead_complete <- lead_complete |>
+  mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low")) |>
+  mutate(lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
+
+ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
+  geom_violin() +
+  theme_minimal() +
+  labs(title = "Violin plot of lead exposure and fwtap",
+       x = "Lead exposure",
+       y = "fwtap")
+
+ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
+  geom_violin() +
+  theme_minimal() +
+  labs(title = "Violin plot of lead exposure and fwtap",
+       x = "Lead exposure",
+       y = "tap")
+
+ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
+  geom_bar(position = "fill") +  
+  geom_text(stat = "count", aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)), 
+            position = position_fill(vjust = 0.5), size = 5) + 
+  theme_minimal() +
+  labs(title = "Proportion of Irritability by Lead Exposure", 
+       x = "Lead Exposure Group", y = "Proportion",
+       fill = "Irritability (1=Yes, 0=No)")
+
+ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
+  geom_bar(position = "fill") +  
+  geom_text(stat = "count", 
+            aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)),
+            position = position_fill(vjust = 0.5), size = 5, color = "red") + 
+  theme_minimal() +
+  labs(title = "Proportion of Hyperactivity Score by Lead Exposure", 
+       x = "Lead Exposure Group", y = "Proportion",
+       fill = "Hyperactivity Score")
+```
 
 
 
