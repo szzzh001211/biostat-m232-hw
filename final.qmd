@@ -32,6 +32,7 @@ library(visdat)
 library(ggplot2)
 library(mice)
 library(gridExtra)
+library(MASS)
 set.seed(5)
 
 ```
@@ -235,6 +236,60 @@ ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
   labs(title = "Proportion of Hyperactivity Score by Lead Exposure", 
        x = "Lead Exposure Group", y = "Proportion",
        fill = "Hyperactivity Score")
+```
+
+```{r}
+lead_mice_completed <- complete(lead_mice, "long", include = TRUE) |>  
+  mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low"),
+         lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
+
+lead_mice <- as.mids(lead_mice_completed)
+
+
+
+fwtap_marginal <- with(lead_mice, lm(fwtap ~ lead_exposure))
+summary(pool(fwtap_marginal))
+
+fwtap_partial <- with(lead_mice, lm(fwtap ~ lead_exposure + colic + convulse + 
+                                      age_mo + female))
+summary(pool(fwtap_partial))
+
+
+
+tap_marginal <- with(lead_mice, lm(tap ~ lead_exposure))
+summary(pool(tap_marginal))
+
+tap_partial <- with(lead_mice, lm(tap ~ lead_exposure + colic + convulse +
+                                    age_mo + female))
+summary(pool(tap_partial))
+```
+```{r}
+irrit_marginal <- with(lead_mice, glm(irrit ~ lead_exposure, family = "binomial"))
+summary(pool(irrit_marginal))
+
+irrit_partial <- with(lead_mice, glm(irrit ~ lead_exposure + colic + convulse +
+                                       age_mo + female, family = "binomial"))
+summary(pool(irrit_partial))
+
+
+hypscore_marginal <- with(lead_mice, polr(hypscore ~ lead_exposure, Hess = TRUE))
+summary(pool(hypscore_marginal))
+
+
+hypscore_partial <- with(lead_mice, polr(hypscore ~ lead_exposure + colic + convulse +
+                                          age_mo + female, Hess = TRUE))
+summary(pool(hypscore_partial))
+exp(pool(hypscore_partial)[,3][1,3])
+```
+
+```{r}
+fwtap_test <- with(lead_mice, t.test(fwtap ~ lead_exposure))
+
+tap_test <- with(lead_mice, t.test(tap ~ lead_exposure))
+
+irrit_test <- with(lead_mice, chisq.test(table(lead_exposure, irrit)))
+
+hypscore_test <- with(lead_mice, wilcox.test(as.numeric(hypscore) ~ lead_exposure))
 ```
 
 
