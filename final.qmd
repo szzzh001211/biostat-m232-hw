@@ -33,6 +33,10 @@ library(ggplot2)
 library(mice)
 library(gridExtra)
 library(MASS)
+library(MultiVarMI)
+library(tidyverse)
+library(jomo)
+
 set.seed(5)
 
 ```
@@ -88,11 +92,180 @@ miss_var_summary(lead)
 
 ## Task 1
 
+```{r,eval=FALSE}
+lead <- read.table("lead.txt")
+lead[lead == -9] <- NA
+col_names <- c("id", "smeltdis", "age_mo", "female", "iqf", "lead72", "lead73", 
+               "fst2yrs", "totyrs", "pica", "colic", "clumsy", "irrit", 
+               "convulse", "fwtap", "tap", "visreact", "audreact", "hypscore")
+colnames(lead) <- col_names
+
+lead_na <- lead[, -c(1,2,3)]
+lead_mi <- MI(lead_na, var.types = c("O", "NCT", "NCT", 
+                                  "NCT", "O", "NCT", "O", "O", "O", "O", "O",
+                                  "NCT", "NCT", "NCT", "NCT", "O"), m = 10)
+
+```
+
 ```{r}
+
+
+lead <- read.table("lead.txt")
+lead[lead == -9] <- NA
+col_names <- c("id", "smeltdis", "age_mo", "female", "iqf", "lead72", "lead73", 
+               "fst2yrs", "totyrs", "pica", "colic", "clumsy", "irrit", 
+               "convulse", "fwtap", "tap", "visreact", "audreact", "hypscore")
+colnames(lead) <- col_names
+
+Y.con <- lead[, c("id", "age_mo", "iqf", "lead72", "lead73", "totyrs", "fwtap", 
+                  "tap", "visreact", "audreact")]
+Y.cat <- lead[, c("smeltdis", "female", "fst2yrs", "pica", "colic", "clumsy", 
+                  "irrit", "convulse", "hypscore")]
+Y.numcat <- matrix(c(3, 2, 2, 2, 2, 2, 2, 2, 4), 1, 9)
+
+lead <- jomo1mix(Y.con, Y.cat, Y.numcat)
 
 
 ```
 
+```{r}
+lead$female <- factor(lead$female, levels = c(0,1), labels = c("Male", "Female"))
+lead$fst2yrs <- factor(lead$fst2yrs, levels = c(0,1), labels = c("No", "Yes"))
+lead$pica <- factor(lead$pica, levels = c(0,1), labels = c("No", "Yes"))
+lead$colic <- factor(lead$colic, levels = c(0,1), labels = c("No", "Yes"))
+lead$clumsy <- factor(lead$clumsy, levels = c(0,1), labels = c("No", "Yes"))
+lead$irrit <- factor(lead$irrit, levels = c(0,1), labels = c("No", "Yes"))
+lead$convulse <- factor(lead$convulse, levels = c(0,1), labels = c("No", "Yes"))
+lead$hypscore <- factor(lead$hypscore, levels = c(0,1,2,3,4), 
+                        labels = c("Never", "Seldom", "Sometimes", "Often", 
+                                   "Always"), ordered = TRUE)
+
+
+lead$smeltdis <- factor(lead$smeltdis, levels = c(1,2,3), 
+                        labels = c("0-1 miles", "1-2.5 miles", "2.5-4.1 miles"), 
+                        ordered = TRUE)
+
+lead <- lead[, -c(20:22)]
+
+```
+
+
+
+```{r}
+lead1 <- lead[125:248, ]
+lead2 <- lead[249:372, ]
+lead3 <- lead[373:496, ]
+lead4 <- lead[497:620, ]
+lead5 <- lead[621:744, ]
+lead <- lead[1:124, ]
+
+plts <- list()
+
+plts[[1]] <- ggplot(data = lead, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Original data") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[2]] <- ggplot(data = lead1, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "First imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[3]] <- ggplot(data = lead2, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Second imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[4]] <- ggplot(data = lead3, aes(x = lead72)) + 
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Third imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[5]] <- ggplot(data = lead4, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Fourth imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+
+plts[[6]] <- ggplot(data = lead5, aes(x = lead72)) +
+  geom_histogram() + 
+  theme_bw() + 
+  labs(title = "Fifth imputation") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),  
+        axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 18)
+        )
+  
+ggsave("imputation_histograms.png", 
+       grid.arrange(grobs = plts, nrow = 2), 
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
+```
+
+
+
+
+```{r}
+Y.con=sldata[,c("measure","age")]
+Y.cat=sldata[,c("social"), drop=FALSE]
+Y.numcat=matrix(4,1,1)
+X=data.frame(rep(1,300),sldata[,c("sex")])
+colnames(X)<-c("const", "sex")
+beta.start<-matrix(0,2,5)
+l1cov.start<-diag(1,5)
+l1cov.prior=diag(1,5);
+nburn=as.integer(100);
+nbetween=as.integer(100);
+nimp=as.integer(5);
+jomo1mix(Y.con,Y.cat,Y.numcat)
+
+
+```
 
 
 ## Task 2 -- Mice Imputation
