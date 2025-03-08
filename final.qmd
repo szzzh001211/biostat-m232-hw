@@ -36,6 +36,7 @@ library(MASS)
 library(MultiVarMI)
 library(tidyverse)
 library(jomo)
+library(broom)
 
 set.seed(5)
 
@@ -145,7 +146,7 @@ lead$smeltdis <- factor(lead$smeltdis, levels = c(1,2,3),
                         labels = c("0-1 miles", "1-2.5 miles", "2.5-4.1 miles"), 
                         ordered = TRUE)
 
-lead <- lead[, -c(20:22)]
+lead <- lead[, -c(20:21)]
 
 ```
 
@@ -247,28 +248,287 @@ ggsave("imputation_histograms.png",
        bg = "white")
 ```
 
+```{r}
+lead_complete <- lead[125:248, ]
+
+lead_complete <- lead_complete |>
+  mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low")) |>
+  mutate(lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
+
+ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
+  geom_violin() +
+  theme_minimal() +
+  labs(title = "Violin plot of lead exposure and fwtap",
+       x = "Lead exposure",
+       y = "fwtap")
+
+ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
+  geom_violin() +
+  theme_minimal() +
+  labs(title = "Violin plot of lead exposure and fwtap",
+       x = "Lead exposure",
+       y = "tap")
+
+ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
+  geom_bar(position = "fill") +  
+  geom_text(stat = "count", aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)), 
+            position = position_fill(vjust = 0.5), size = 5) + 
+  theme_minimal() +
+  labs(title = "Proportion of Irritability by Lead Exposure", 
+       x = "Lead Exposure Group", y = "Proportion",
+       fill = "Irritability (1=Yes, 0=No)")
+
+ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
+  geom_bar(position = "fill") +  
+  geom_text(stat = "count", 
+            aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)),
+            position = position_fill(vjust = 0.5), size = 5, color = "red") + 
+  theme_minimal() +
+  labs(title = "Proportion of Hyperactivity Score by Lead Exposure", 
+       x = "Lead Exposure Group", y = "Proportion",
+       fill = "Hyperactivity Score")
+
+```
+
+```{r}
+lead_mice <- lead[125:744, ] |>
+  mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low"),
+         lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
+
+lead_mice$Imputation <- as.factor(lead_mice$Imputation)
+
+lead_list <- split(lead_mice, lead_mice$Imputation)
+
+lm_results <- lapply(lead_list, function(data) {
+  lm(fwtap ~ lead_exposure, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+fwtap_marginal <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(fwtap_marginal)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  lm(fwtap ~ lead_exposure + colic + convulse + age_mo + female, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+fwtap_partial <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(fwtap_partial)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  lm(tap ~ lead_exposure, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+tap_marginal <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(tap_marginal)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  lm(tap ~ lead_exposure + colic + convulse + age_mo + female, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+tap_partial <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(tap_partial)
+
+```
+```{r}
+lm_results <- lapply(lead_list, function(data) {
+  glm(irrit ~ lead_exposure, family = "binomial", data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+irrit_marginal <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(irrit_marginal)
+
+lm_results <- lapply(lead_list, function(data) {
+  glm(irrit ~ lead_exposure + colic + convulse +  age_mo + female, 
+      family = "binomial", data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+irrit_partial <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(p.value)
+  )
+print(irrit_partial)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  polr(hypscore ~ lead_exposure, Hess = TRUE, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+hypscore_marginal <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(2 * (1-pt(abs(statistic), df = 119)))
+  )
+print(hypscore_marginal)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  polr(hypscore ~ lead_exposure + colic + convulse + age_mo + female, 
+       Hess = TRUE, data = data)
+})
+       
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+hypscore_partial <- lm_df %>%
+  group_by(term) %>%
+  summarise(
+    estimate = mean(estimate),
+    std.error = sqrt(mean(std.error^2)),
+    p.value = mean(1-pt(abs(statistic), df = 115))
+  )
+print(hypscore_partial)
+exp(hypscore_partial$estimate[9])
+```
 
 
 
 ```{r}
-Y.con=sldata[,c("measure","age")]
-Y.cat=sldata[,c("social"), drop=FALSE]
-Y.numcat=matrix(4,1,1)
-X=data.frame(rep(1,300),sldata[,c("sex")])
-colnames(X)<-c("const", "sex")
-beta.start<-matrix(0,2,5)
-l1cov.start<-diag(1,5)
-l1cov.prior=diag(1,5);
-nburn=as.integer(100);
-nbetween=as.integer(100);
-nimp=as.integer(5);
-jomo1mix(Y.con,Y.cat,Y.numcat)
+lm_results <- lapply(lead_list, function(data) {
+  t.test(fwtap ~ lead_exposure, data = data)
+})
 
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+fwtap_test <- lm_df %>%
+  summarise(
+    p.value = mean(p.value)
+  )
+print(fwtap_test)
+
+lm_results <- lapply(lead_list, function(data) {
+  t.test(tap ~ lead_exposure, data = data)
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+tap_test <- lm_df %>%
+  summarise(
+    p.value = mean(p.value)
+  )
+print(tap_test)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  chisq.test(table(data$lead_exposure, data$irrit))
+})
+
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+irrit_test <- lm_df %>%
+  summarise(
+    p.value = mean(p.value)
+  )
+print(irrit_test)
+
+
+lm_results <- lapply(lead_list, function(data) {
+  wilcox.test(as.numeric(data$hypscore) ~ data$lead_exposure)
+})
+lm_summaries <- lapply(lm_results, tidy) 
+lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+
+hypscore_test <- lm_df %>%
+  summarise(
+    p.value = mean(p.value)
+  )
+print(hypscore_test)
 
 ```
 
 
+
+
+
+
 ## Task 2 -- Mice Imputation
+
+
+```{r}
+lead <- read.table("lead.txt")
+lead[lead == -9] <- NA
+col_names <- c("id", "smeltdis", "age_mo", "female", "iqf", "lead72", "lead73", 
+               "fst2yrs", "totyrs", "pica", "colic", "clumsy", "irrit", 
+               "convulse", "fwtap", "tap", "visreact", "audreact", "hypscore")
+colnames(lead) <- col_names
+
+lead$female <- factor(lead$female, levels = c(0,1), labels = c("Male", "Female"))
+lead$fst2yrs <- factor(lead$fst2yrs, levels = c(0,1), labels = c("No", "Yes"))
+lead$pica <- factor(lead$pica, levels = c(0,1), labels = c("No", "Yes"))
+lead$colic <- factor(lead$colic, levels = c(0,1), labels = c("No", "Yes"))
+lead$clumsy <- factor(lead$clumsy, levels = c(0,1), labels = c("No", "Yes"))
+lead$irrit <- factor(lead$irrit, levels = c(0,1), labels = c("No", "Yes"))
+lead$convulse <- factor(lead$convulse, levels = c(0,1), labels = c("No", "Yes"))
+lead$hypscore <- factor(lead$hypscore, levels = c(0,1,2,3,4), 
+                        labels = c("Never", "Seldom", "Sometimes", "Often", 
+                                   "Always"), ordered = TRUE)
+
+
+lead$smeltdis <- factor(lead$smeltdis, levels = c(1,2,3), 
+                        labels = c("0-1 miles", "1-2.5 miles", "2.5-4.1 miles"), 
+                        ordered = TRUE)
+```
+
 
 ```{r}
 
@@ -436,6 +696,7 @@ tap_partial <- with(lead_mice, lm(tap ~ lead_exposure + colic + convulse +
                                     age_mo + female))
 summary(pool(tap_partial))
 ```
+
 ```{r}
 irrit_marginal <- with(lead_mice, glm(irrit ~ lead_exposure, family = "binomial"))
 summary(pool(irrit_marginal))
