@@ -240,7 +240,7 @@ plts[[6]] <- ggplot(data = lead5, aes(x = lead72)) +
         legend.title = element_text(size = 18)
         )
   
-ggsave("imputation_histograms.png", 
+ggsave("imputation_histograms_task1.png", 
        grid.arrange(grobs = plts, nrow = 2), 
        width = 12, 
        height = 9, 
@@ -621,7 +621,7 @@ plts[[6]] <- ggplot(data = lead5, aes(x = lead72)) +
         legend.title = element_text(size = 18)
         )
   
-ggsave("imputation_histograms.png", 
+ggsave("imputation_histograms_task2.png", 
        grid.arrange(grobs = plts, nrow = 2), 
        width = 12, 
        height = 9, 
