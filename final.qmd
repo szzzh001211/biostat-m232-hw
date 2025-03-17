@@ -37,7 +37,7 @@ library(MultiVarMI)
 library(tidyverse)
 library(jomo)
 library(broom)
-
+library(UpSetR)
 set.seed(5)
 
 ```
@@ -87,6 +87,10 @@ plot(p)
 #        bg = "white")
 
 miss_var_summary(lead)
+
+gg_miss_upset(lead, nsets = 6)
+
+
 ```
 
 
@@ -255,19 +259,47 @@ lead_complete <- lead_complete |>
   mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low")) |>
   mutate(lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
 
-ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
   geom_violin() +
   theme_minimal() +
-  labs(title = "Violin plot of lead exposure and fwtap",
-       x = "Lead exposure",
-       y = "fwtap")
+  labs(
+       x = "Lead Exposure",
+       y = "fwtap") +
+theme(
+    legend.position = "none",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 34),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 32),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 32),               # 图例字体大小
+    legend.title = element_text(size = 34)               # 图例标题字体大小
+  )
+ggsave("fwtap_ts1.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 
-ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
   geom_violin() +
   theme_minimal() +
-  labs(title = "Violin plot of lead exposure and fwtap",
-       x = "Lead exposure",
-       y = "tap")
+  labs(
+       x = "Lead Exposure",
+       y = "tap")+
+theme(
+    legend.position = "none",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 34),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 32),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 32),               # 图例字体大小
+    legend.title = element_text(size = 34)               # 图例标题字体大小
+  )
+ggsave("tap_ts1.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 
 ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
   geom_bar(position = "fill") +  
@@ -278,16 +310,29 @@ ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
        x = "Lead Exposure Group", y = "Proportion",
        fill = "Irritability (1=Yes, 0=No)")
 
-ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
   geom_bar(position = "fill") +  
   geom_text(stat = "count", 
             aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)),
-            position = position_fill(vjust = 0.5), size = 5, color = "red") + 
+            position = position_fill(vjust = 0.5), size = 10, color = "red") + 
   theme_minimal() +
-  labs(title = "Proportion of Hyperactivity Score by Lead Exposure", 
-       x = "Lead Exposure Group", y = "Proportion",
-       fill = "Hyperactivity Score")
-
+  labs(
+       x = "Lead Exposure", y = "Proportion",
+       fill = "hypscore") +
+theme(
+    legend.position = "bottom",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 30),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 28),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 26),               # 图例字体大小
+    legend.title = element_text(size = 30)               # 图例标题字体大小
+  )
+ggsave("hys_ts1.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 ```
 
 ```{r}
@@ -315,6 +360,17 @@ fwtap_marginal <- lm_df %>%
   )
 print(fwtap_marginal)
 
+# lm_results_base <- lapply(lead_list, function(data) {
+#   lm(fwtap ~ lead_exposure + colic + convulse + age_mo + female, data = data)
+# })
+# 
+# lm_results_interaction <- lapply(lead_list, function(data) {
+#   lm(fwtap ~ lead_exposure * colic + lead_exposure * convulse + lead_exposure * age_mo + lead_exposure * female, data = data)
+# })
+# 
+# anova_results <- lapply(seq_along(lm_results_base), function(i) {
+#   anova(lm_results_base[[i]], lm_results_interaction[[i]])
+# })
 
 lm_results <- lapply(lead_list, function(data) {
   lm(fwtap ~ lead_exposure + colic + convulse + age_mo + female, data = data)
@@ -323,8 +379,8 @@ lm_results <- lapply(lead_list, function(data) {
 lm_summaries <- lapply(lm_results, tidy) 
 lm_df <- bind_rows(lm_summaries, .id = "Imputation")
 
-fwtap_partial <- lm_df %>%
-  group_by(term) %>%
+fwtap_partial <- lm_df |>
+  group_by(term) |>
   summarise(
     estimate = mean(estimate),
     std.error = sqrt(mean(std.error^2)),
@@ -468,18 +524,18 @@ tap_test <- lm_df %>%
 print(tap_test)
 
 
-lm_results <- lapply(lead_list, function(data) {
-  chisq.test(table(data$lead_exposure, data$irrit))
-})
-
-lm_summaries <- lapply(lm_results, tidy) 
-lm_df <- bind_rows(lm_summaries, .id = "Imputation")
-
-irrit_test <- lm_df %>%
-  summarise(
-    p.value = mean(p.value)
-  )
-print(irrit_test)
+# lm_results <- lapply(lead_list, function(data) {
+#   chisq.test(table(data$lead_exposure, data$irrit))
+# })
+# 
+# lm_summaries <- lapply(lm_results, tidy) 
+# lm_df <- bind_rows(lm_summaries, .id = "Imputation")
+# 
+# irrit_test <- lm_df %>%
+#   summarise(
+#     p.value = mean(p.value)
+#   )
+# print(irrit_test)
 
 
 lm_results <- lapply(lead_list, function(data) {
@@ -637,19 +693,47 @@ lead_complete <- lead_complete |>
   mutate(lead_exposure = ifelse(lead72 >= 40, "High", "Low")) |>
   mutate(lead_exposure = factor(lead_exposure, levels = c("Low", "High")))
 
-ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, y = fwtap, fill = lead_exposure)) +
   geom_violin() +
   theme_minimal() +
-  labs(title = "Violin plot of lead exposure and fwtap",
-       x = "Lead exposure",
-       y = "fwtap")
+  labs(
+       x = "Lead Exposure",
+       y = "fwtap") +
+theme(
+    legend.position = "none",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 34),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 32),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 32),               # 图例字体大小
+    legend.title = element_text(size = 34)               # 图例标题字体大小
+  )
+ggsave("fwtap_ts2.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 
-ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, y = tap, fill = lead_exposure)) +
   geom_violin() +
   theme_minimal() +
-  labs(title = "Violin plot of lead exposure and fwtap",
-       x = "Lead exposure",
-       y = "tap")
+  labs(
+       x = "Lead Exposure",
+       y = "tap") +
+theme(
+    legend.position = "none",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 34),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 32),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 32),               # 图例字体大小
+    legend.title = element_text(size = 34)               # 图例标题字体大小
+  )
+ggsave("tap_ts2.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 
 ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
   geom_bar(position = "fill") +  
@@ -660,15 +744,29 @@ ggplot(lead_complete, aes(x = lead_exposure, fill = irrit)) +
        x = "Lead Exposure Group", y = "Proportion",
        fill = "Irritability (1=Yes, 0=No)")
 
-ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
+p <- ggplot(lead_complete, aes(x = lead_exposure, fill = hypscore)) +
   geom_bar(position = "fill") +  
   geom_text(stat = "count", 
             aes(label = scales::percent(..count../tapply(..count.., ..x.., sum)[..x..], accuracy = 0.1)),
-            position = position_fill(vjust = 0.5), size = 5, color = "red") + 
+            position = position_fill(vjust = 0.5), size = 10, color = "red") + 
   theme_minimal() +
-  labs(title = "Proportion of Hyperactivity Score by Lead Exposure", 
-       x = "Lead Exposure Group", y = "Proportion",
-       fill = "Hyperactivity Score")
+  labs(
+       x = "Lead Exposure", y = "Proportion",
+       fill = "hypscore") +
+theme(
+    legend.position = "bottom",                          # 图例在底部
+    legend.key.size = unit(0.8, 'cm'),                   # 图例符号大小
+    axis.title = element_text(size = 30),                # 坐标轴标题字体大小
+    axis.text = element_text(size = 28),                 # 坐标轴标签字体大小
+    legend.text = element_text(size = 26),               # 图例字体大小
+    legend.title = element_text(size = 30)               # 图例标题字体大小
+  )
+ggsave("hys_ts2.png", 
+       p,
+       width = 12, 
+       height = 9, 
+       dpi = 300,
+       bg = "white")
 ```
 
 ```{r}
@@ -718,13 +816,24 @@ exp(pool(hypscore_partial)[,3][1,3])
 
 ```{r}
 fwtap_test <- with(lead_mice, t.test(fwtap ~ lead_exposure))
-
+mean(sapply(fwtap_test$analyses[1:5], function(x) x$p.value))
 tap_test <- with(lead_mice, t.test(tap ~ lead_exposure))
-
+mean(sapply(tap_test$analyses[1:5], function(x) x$p.value))
 irrit_test <- with(lead_mice, chisq.test(table(lead_exposure, irrit)))
 
 hypscore_test <- with(lead_mice, wilcox.test(as.numeric(hypscore) ~ lead_exposure))
+mean(sapply(hypscore_test$analyses[1:5], function(x) x$p.value))
 ```
+
+
+
+
+
+
+## Task 4
+
+
+
 
 
 
